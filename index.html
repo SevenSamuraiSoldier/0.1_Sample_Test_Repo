@@ -1,59 +1,56 @@
-<html lang="en"><head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="robots" content="noindex">
-
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ai Prompt Generator!</title>
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Animal Selector</title>
-
-        <style id="jsbin-css">
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
+        <!-- <link rel="stylesheet" href="style.css"> -->
+        
+        <style>
             body {
-                position: relative;
+                /* position: relative; */
                 background-color: #333;
                 color: #bebebe;
-                font-family: Arial, sans-serif;
-                min-height: 100vh;
-                display: flex;
+                /* font-family: Arial, sans-serif;
+                min-height: 100vh; */
+                /* display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: start;
-                padding: 20px;
+                padding: 20px; */
             }
 
-            .container {
-                position: relative;
-                width: 100%;
-                max-width: 400px;
-                text-align: center;
-            }
+            input,button {
+                /* width: 100%; */
+                padding-block: 1em;
+                padding-inline: 1em;
+                margin: 1em 1em;
 
-            input[type="text"],button {
-                width: 100%;
-                padding: 12px;
-                margin: 20px 0;
                 background-color: #444;
                 color: #bebebe;
                 border: 1px solid #666;
                 border-radius: 4px;
-                font-size: 16px;
+                /* font-size: 16px; */
             }
             button {
-                width: unset;
-                transition: 0.3s ease-in-out;
+                cursor: pointer;
+                min-width: 10em;
             }
-            button:hover {
-                scale: 1.1;
-                background-color: #535353;
+            input {
+                min-width: 15em;
             }
-
-            input[type="text"]:focus {
-                outline: none;
-                border-color: #bebebe;
+            h3 {
+                text-align: center;
+                font-size: 1.5em;
+                margin-block: 1em;
+            }
+            #datalist-container {
+                display: flex;
+                flex-wrap: wrap;
+                /* gap: 2em; */
+                justify-content: center;
+                align-items: center;
+                align-content: center;
             }
 
             #output {
@@ -66,252 +63,522 @@
                 align-items: center;
                 justify-content: center;
                 font-size: 18px;
+                cursor: pointer;
             }
 
-            datalist {
-                background-color: #444;
-                color: #bebebe;
+            /*--- For Popup Panel-------------------------*/
+            #new-datalist-panel {
+                display: none;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #31615f;
+                /* display:flex; */
+                flex-wrap: wrap;
+            }
+            #new-input-group {
+                margin: auto;
+                width: 20em;
+                position: fixed;
+                top: 5em;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                flex-direction: column;
+                align-content: center;
+                justify-content: center;
+                flex-wrap: wrap;
+                
+            }
+            #new-input-group > label {
+                margin: 1em;
+                text-align: center;
+            }
+            /*-------------------------------------------*/
+
+            .add-btn {
+                /* background-color: #7b7b7b; */
+                cursor: pointer;
+                opacity: 100%;
+                padding-inline: 0.5em;
+                padding-block: 0.5em;
+                transition: 0.2s ease-in-out;
+            }
+            .add-btn:hover, .add-btn:focus {
+                opacity: 100%;
             }
 
-            /* Add this to styles.css */
-            #counter {
-                position: absolute;
-                top: 10px;
-                right: 20px;
-                padding: 5px 10px;
-                background: #444;
-                border-radius: 4px;
-                font-size: 14px;
+            #combine-btn-panel {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            @media screen and (orientation: portrait) {
+                input,button {
+                    padding-block: 0.5em;
+                    padding-inline: 0.25em;
+                    margin: 0.5em 0.5em;
+                }
+                h3 {
+                    font-size: 0.8em;
+                    margin-block: 0.25em;
+                }
             }
 
-            body {
-                position: relative;
-                padding-top: 5rem;
-            }
+            
         </style>
     </head>
+    
     <body>
-        <div class="container" style="position: relative">
-            <h1>Animal Selector</h1>
-            <input type="text" list="animals" placeholder="Select or type an animal" id="animalInput">
-            <datalist id="animals">
-                <option value="Dog"></option>
-                <option value="Cat"></option>
-                <option value="Elephant"></option>
-                <option value="Lion"></option>
-                <option value="Tiger"></option>
-                <option value="Bear"></option>
-                <option value="Wolf"></option>
-                <option value="Fox"></option>
-                <option value="Rabbit"></option>
-                <option value="Deer"></option>
-                <option value="Monkey"></option>
-                <option value="Giraffe"></option>
-                <option value="Zebra"></option>
-                <option value="Kangaroo"></option>
-                <option value="Panda"></option>
-                <option value="Horse"></option>
-                <option value="Cow"></option>
-                <option value="Pig"></option>
-                <option value="Sheep"></option>
-                <option value="Goat"></option>
-                <option value="Albatross"></option>
-                <option value="Alligator"></option>
-                <option value="Alpaca"></option>
-                <option value="Anaconda"></option>
-                <option value="Antelope"></option>
-                <option value="Arctic Fox"></option>
-                <option value="Armadillo"></option>
-                <option value="Axolotl"></option>
-                <option value="Badger"></option>
-                <option value="Bald Eagle"></option>
-                <option value="Barracuda"></option>
-                <option value="Bat"></option>
-                <option value="Beaver"></option>
-                <option value="Beluga Whale"></option>
-                <option value="Blue Whale"></option>
-                <option value="Bobcat"></option>
-                <option value="Bonobo"></option>
-                <option value="Cheetah"></option>
-                <option value="Chimpanzee"></option>
-                <option value="Cobra"></option>
-                <option value="Cockatoo"></option>
-                <option value="Coelacanth"></option>
-                <option value="Cougar"></option>
-                <option value="Crocodile"></option>
-                <option value="Dolphin"></option>
-                <option value="Dugong"></option>
-                <option value="Eagle"></option>
-                <option value="Emu"></option>
-                <option value="Falcon"></option>
-                <option value="Flamingo"></option>
-                <option value="Gazelle"></option>
-                <option value="Gecko"></option>
-                <option value="Gibbon"></option>
-                <option value="Gorilla"></option>
-                <option value="Hammerhead Shark"></option>
-                <option value="Hedgehog"></option>
-                <option value="Hippopotamus"></option>
-                <option value="Hyena"></option>
-                <option value="Iguana"></option>
-                <option value="Jaguar"></option>
-                <option value="Jellyfish"></option>
-                <option value="Kangaroo Rat"></option>
-                <option value="Kingfisher"></option>
-                <option value="Koala"></option>
-                <option value="Komodo Dragon"></option>
-                <option value="Lemur"></option>
-                <option value="Leopard"></option>
-                <option value="Lynx"></option>
-                <option value="Manatee"></option>
-                <option value="Manta Ray"></option>
-                <option value="Mongoose"></option>
-                <option value="Narwhal"></option>
-                <option value="Ocelot"></option>
-                <option value="Octopus"></option>
-                <option value="Orangutan"></option>
-                <option value="Ostrich"></option>
-                <option value="Otter"></option>
-                <option value="Pangolin"></option>
-                <option value="Peacock"></option>
-                <option value="Pelican"></option>
-                <option value="Penguin"></option>
-                <option value="Platypus"></option>
-                <option value="Polar Bear"></option>
-                <option value="Porcupine"></option>
-                <option value="Puma"></option>
-                <option value="Quokka"></option>
-                <option value="Raccoon"></option>
-                <option value="Rhinoceros"></option>
-                <option value="Seahorse"></option>
-                <option value="Snow Leopard"></option>
-                <option value="Tapir"></option>
-                <option value="Tasmanian Devil"></option>
-                <option value="Toucan"></option>
-                <option value="Vulture"></option>
-                <option value="Walrus"></option>
-                <option value="Wombat"></option>
-                <option value="Yak"></option>
-                <option value="Zebu"></option>
-                <option value="Panther"></option>
-                <option value="Black Panther"></option>
-                <option value="Chicken"></option>
-                <option value="Orca"></option>
-                <option value="Hen"></option>
-                <option value="Crow"></option>
-                <option value="Sparrow"></option>
-                <option value="Pigeon"></option>
-                <option value="Turtle"></option>
-                <option value="Tortoise"></option>
-                <option value="Llama"></option>
-                <option value="Squid"></option>
-                <option value="Shark"></option>
-                <option value="Great White Shark"></option>
-                <option value="Tiger Shark"></option>
-                <option value="Grizzly Bear"></option>
-                <option value="Snake"></option>
-                <option value="Python"></option>
-                <option value="Rattle Snake"></option>
-                <option value="Sea Snake"></option>
-                <option value="Eel"></option>
-                <option value="Electric Eel"></option>
-                <option value="Salamander"></option>
-                <option value="Hamster"></option>
-                <option value="Wild Boar"></option>
-                <option value="Camel"></option>
-                <option value="Donkey"></option>
-                <option value="Kite"></option>
-                <option value="Wood Pecker"></option>
-                <option value="Sperm Whale"></option>
-                <option value="Whale Shark"></option>
-                <option value="Lobster"></option>
-                <option value="Shrimp"></option>
-                <option value="Prawn"></option>
-                <option value="Crab"></option>
-                <option value="Scorpion"></option>
-                <option value="Squirrel"></option>
-                <option value="Chipmunk"></option>
-                <option value="Goose"></option>
-                <option value="Moose"></option>
-                <option value="Bison"></option>
-                <option value="Buffalo"></option>
-                <option value="Skunk"></option>
-                <option value="Bull"></option>
-            <option value="Snow Fairy Bird"></option><option value="T-rex"></option><option value="Rapter"></option></datalist>
-            <div id="output">Selected animal will appear here</div>
-            <!-- Button to trigger download -->
-            <button id="downloadBtn" onclick="downloadHTML()">Save Page</button>
+        <h3>Ai Prompt Generator!</h3>
+        <div id="new-datalist-panel">
+            <div id="new-input-group">
+                <label for="new-datalist-input">Type the Title of new input...</label>
+                <input type="text" id="new-datalist-input">
+                <button id="add-title-btn" onclick="addTitle()">Add Title</button>
+            </div>            
         </div>
-        <div id="counter">Options: 145</div>
-        <script id="jsbin-javascript">
-            const input = document.getElementById("animalInput");
-            const output = document.getElementById("output");
-            const datalist = document.getElementById("animals");
-            const counter = document.getElementById("counter");
+
+        <div id="datalist-container">
+
+            <div class="datalist-group">
+                <!-- <label for="input1">objective1</label> -->
+                <input list="objective1" id="input1" placeholder="Choose an Objective for subject" enterkeyhint="done" />
+                <datalist id="objective1">
+                    <option value="cute"></option>
+                    <option value="adorable"></option>
+                    <option value="tiny"></option>
+                    <option value="angry"></option>
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+            </div>
+
+            <div class="datalist-group">
+                <input list="main-subject" id="input2" placeholder="Choose the Main Subject" enterkeyhint="done"/>
+                <datalist id="main-subject">
+                    <option value="Dog"></option>
+                    <option value="Cat"></option>
+                    <option value="Elephant"></option>
+                    <option value="Lion"></option>
+                    <option value="Tiger"></option>
+                    <option value="Bear"></option>
+                    <option value="Wolf"></option>
+                    <option value="Fox"></option>
+                    <option value="Rabbit"></option>
+                    <option value="Deer"></option>
+                    <option value="Monkey"></option>
+                    <option value="Giraffe"></option>
+                    <option value="Zebra"></option>
+                    <option value="Kangaroo"></option>
+                    <option value="Panda"></option>
+                    <option value="Horse"></option>
+                    <option value="Cow"></option>
+                    <option value="Pig"></option>
+                    <option value="Sheep"></option>
+                    <option value="Goat"></option>
+                    <option value="Albatross"></option>
+                    <option value="Alligator"></option>
+                    <option value="Alpaca"></option>
+                    <option value="Anaconda"></option>
+                    <option value="Antelope"></option>
+                    <option value="Arctic Fox"></option>
+                    <option value="Armadillo"></option>
+                    <option value="Axolotl"></option>
+                    <option value="Badger"></option>
+                    <option value="Bald Eagle"></option>
+                    <option value="Barracuda"></option>
+                    <option value="Bat"></option>
+                    <option value="Beaver"></option>
+                    <option value="Beluga Whale"></option>
+                    <option value="Blue Whale"></option>
+                    <option value="Bobcat"></option>
+                    <option value="Bonobo"></option>
+                    <option value="Cheetah"></option>
+                    <option value="Chimpanzee"></option>
+                    <option value="Cobra"></option>
+                    <option value="Cockatoo"></option>
+                    <option value="Coelacanth"></option>
+                    <option value="Cougar"></option>
+                    <option value="Crocodile"></option>
+                    <option value="Dolphin"></option>
+                    <option value="Dugong"></option>
+                    <option value="Eagle"></option>
+                    <option value="Emu"></option>
+                    <option value="Falcon"></option>
+                    <option value="Flamingo"></option>
+                    <option value="Gazelle"></option>
+                    <option value="Gecko"></option>
+                    <option value="Gibbon"></option>
+                    <option value="Gorilla"></option>
+                    <option value="Hammerhead Shark"></option>
+                    <option value="Hedgehog"></option>
+                    <option value="Hippopotamus"></option>
+                    <option value="Hyena"></option>
+                    <option value="Iguana"></option>
+                    <option value="Jaguar"></option>
+                    <option value="Jellyfish"></option>
+                    <option value="Kangaroo Rat"></option>
+                    <option value="Kingfisher"></option>
+                    <option value="Koala"></option>
+                    <option value="Komodo Dragon"></option>
+                    <option value="Lemur"></option>
+                    <option value="Leopard"></option>
+                    <option value="Lynx"></option>
+                    <option value="Manatee"></option>
+                    <option value="Manta Ray"></option>
+                    <option value="Mongoose"></option>
+                    <option value="Narwhal"></option>
+                    <option value="Ocelot"></option>
+                    <option value="Octopus"></option>
+                    <option value="Orangutan"></option>
+                    <option value="Ostrich"></option>
+                    <option value="Otter"></option>
+                    <option value="Pangolin"></option>
+                    <option value="Peacock"></option>
+                    <option value="Pelican"></option>
+                    <option value="Penguin"></option>
+                    <option value="Platypus"></option>
+                    <option value="Polar Bear"></option>
+                    <option value="Porcupine"></option>
+                    <option value="Puma"></option>
+                    <option value="Quokka"></option>
+                    <option value="Raccoon"></option>
+                    <option value="Rhinoceros"></option>
+                    <option value="Seahorse"></option>
+                    <option value="Snow Leopard"></option>
+                    <option value="Tapir"></option>
+                    <option value="Tasmanian Devil"></option>
+                    <option value="Toucan"></option>
+                    <option value="Vulture"></option>
+                    <option value="Walrus"></option>
+                    <option value="Wombat"></option>
+                    <option value="Yak"></option>
+                    <option value="Zebu"></option>
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)">+</span>
+            </div>
+
+            <div class="datalist-group">
+                <input
+                    list="material-description1"
+                    id="input3"
+                    placeholder="Choose a prefix for material"
+                    enterkeyhint="done"
+                />
+                <datalist id="material-description1">
+                    <option value="made from"></option>
+                    <option value="made out of"></option>
+                    <option value="filled with"></option>
+                    <option value="created from"></option>
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+            </div>
+
+            <div class="datalist-group">
+                <input
+                    list="material-description2"
+                    id="input4"
+                    placeholder="Choose a material (optional)"
+                    enterkeyhint="done"
+                />
+                <datalist id="material-description2">
+                    <option value="small minecraft cubes"></option>
+                    <option value="small lego bricks"></option>
+                    <option value="knitted wool"></option>
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+            </div>
+
+            <div class="datalist-group">
+                <input
+                    list="action-objective"
+                    id="input5"
+                    placeholder="Choose an objective for action"
+                    enterkeyhint="done"
+                />
+                <datalist id="action-objective">
+                    <option value="happily"></option>
+                    <option value="angrily"></option>
+                    <option value="lazily"></option>
+                    <option value="calmy"></option>
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+            </div>
+
+            <div class="datalist-group">
+                <input
+                    list="action"
+                    id="input5"
+                    placeholder="Choose an action"
+                    enterkeyhint="done"
+                />
+                <datalist id="action">
+                    <option value="playing"></option>
+                    <option value="walking"></option>
+                    <option value="running"></option>
+                    <option value="flying"></option>
+                    <option value="swimming"></option>
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+            </div>
+
+            <div class="datalist-group">
+                <input
+                    list="action-descriptor"
+                    id="input5"
+                    placeholder="Choose an action-descriptor"
+                    enterkeyhint="done"
+                />
+                <datalist id="action-descriptor">
+                    <option value="in its natural habitat."></option>
+                    <option value="in its usual location."></option>
+                    <option value="on the ground."></option>
+                    <option value="in the garden."></option>
+                    <option value="in the forrest."></option>
+                    <option value="in the ocean"></option>
+                    <option value="over the mountains"></option>
+                    <option value="near the river"></option>
+                    <option value="over a city"></option>
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+            </div>
+
+            <div class="datalist-group">
+                <input
+                    list="art style"
+                    id="input5"
+                    placeholder="Choose an art style"
+                    enterkeyhint="done"
+                />
+                <datalist id="art style">
+                    <option value="knitted toy style art."></option>
+                    <option value="Minecraft style art."></option>
+                    <option value="Lego style art."></option>
+                    <option value="Ghibli style art."></option>
+                    <option value="Anime style art."></option>
+                    <option value="Pixar studio style art."></option>
+                    <option value="classic disney 2d style art."></option>
+                    <option value="caricature style art."></option>
+                    <option value="Marvel studio style art."></option>
+                    
+                </datalist>
+                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+            </div>
+
+        </div>
+
+        <div id="combine-btn-panel">
+            <button id="combine-btn" onclick="combineInputs()">Combine</button>
+            <button id="download-btn" onclick="downloadHTML()">Save</button>
+        </div>
+        
+
+        <!-- <h4>Output:</h4> -->
+        <p id="output" onclick="copyToClipboard()">Prompt will appear here....</p>
+
+        <script>
+            let dropdownCount = 3;
+            let newInputTitlePanel = document.getElementById("new-datalist-panel");
+            let newDatalistInput = document.getElementById("new-datalist-input");
             const downloadBtn = document.getElementById('downloadBtn');
+            let newTitle;
+            let currentPlusBtn;
 
-            let customAnimals = new Set();
-            // Create counter element
+            // Wait for the webpage to load and then Add input event listeners-----
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get the div with id 'datalist-container'
+                const datalistContainer = document.getElementById('datalist-container');
 
-            // Add counter to the container
-            const container = document.querySelector(".container");
-            /*
-                container.style.position = 'relative';
-                counter.style.position = 'absolute';
-                counter.style.top = '20px';
-                counter.style.right = '20px';
-                counter.style.padding = '5px 10px';
-                counter.style.background = '#444';
-                counter.style.borderRadius = '4px';
-                counter.style.fontSize = '14px';
-                container.prepend(counter);
-                document.body.appendChild(counter);
-            */
-            
+                // Check if the div exists
+                if (datalistContainer) {
+                    // Get all input elements inside the div
+                    const inputElements = datalistContainer.querySelectorAll('input');
+                    //console.log(inputElements);
 
-            function updateCounter() {
-                //const totalOptions = datalist.options.length;
-                const totalOptions = datalist.querySelectorAll("option").length;
-                counter.textContent = `Options: ${totalOptions}`;
-            }
+                    // Loop through each input element and add an event listener
+                    inputElements.forEach(function(inputElement) {
+                        
+                        inputElement.addEventListener("keydown", (e) => {
+                            // e.keyCode 13 is also equivalent to Enter key. 
+                            if ((e.key === "Enter" || e.keyCode === 13) && inputElement.value.trim()) {
+                                const value = inputElement.value.trim();
+                                const datalist = inputElement.nextElementSibling;
+                                //console.log(datalist); //For Debugging
+                                let newCustomValues = new Set();
 
-            input.addEventListener("input", () => {
-                output.textContent =
-                    input.value || "Selected animal will appear here";
-            });
+                                const allOptions = Array.from(datalist.options).map(
+                                    (opt) => opt.value
+                                );
+                                if (
+                                    !allOptions.includes(value.toLowerCase()) &&
+                                    !newCustomValues.has(value.toLowerCase())
+                                ) {
+                                    
+                                    const newOption = document.createElement("option");
+                                    
+                                    var newValue = value.toLowerCase();
+                                    newOption.value = newValue;
+                                    datalist.appendChild(newOption);
+                                    newCustomValues.add(newValue);
+                                    
+                                    alert(`Added new option: ${value}`);
+                                    inputElement.value = "";
+                                    
+                                } else {
+                                    alert(`Value already exists!`);
+                                }
+                                e.preventDefault(); //To prevent default behaviour of Enter Key
+                            }
+                        });
 
-            input.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" && input.value.trim()) {
-                    const value = input.value.trim();
-
-                    const allOptions = Array.from(datalist.options).map(
-                        (opt) => opt.value
-                    );
-                    if (
-                        !allOptions.includes(value) &&
-                        !customAnimals.has(value)
-                    ) {
-                        const newOption = document.createElement("option");
-                        // Code line to capitalize first letter of every word in new custom options----------
-                        var newValue = value
-                            .split(" ")
-                            .map(
-                                (word) =>
-                                    word.charAt(0).toUpperCase() + word.slice(1)
-                            )
-                            .join(" ");
-                        newOption.value = newValue;
-                        datalist.appendChild(newOption);
-                        customAnimals.add(newValue);
-                        output.textContent = `Added new animal: ${newValue}`;
-                        input.value = "";
-                        updateCounter(); // Update count after adding
-                    } else {
-                        output.textContent = `${newValue} already exists!`;
-                    }
-                    e.preventDefault();
+                    });
+                } else {
+                    console.log('Div with id "datalist-container" not found.');
                 }
             });
+
+
+            // Function to open new title panel & Set the current "+" button as currentPlusBtn element 
+            function createNewDropdown(currentElement) {
+                currentPlusBtn = currentElement;
+                //console.log("Current plus button:  "+currentPlusBtn);
+                newInputTitlePanel.style.display = "flex";
+                newDatalistInput.focus();
+            }
+
+            function addNewDropDownToDisplay(currentElement){
+                let previousParentElement = currentElement.parentElement;
+                //const container = document.getElementById("datalist-container");
+
+                // Create a new datalist group------------
+                const newGroup = document.createElement("div");
+                newGroup.classList.add("datalist-group");
+
+                /* ----Old Code----------------------------------------
+                Create input field for placeholder text
+                const inputField = document.createElement("input");
+                inputField.type = "text";
+                inputField.placeholder = "Enter placeholder text";
+                previousParentElement.insertAdjacentElement('afterend', inputField);
+                container.appendChild(inputField); ---Old Code-------
+                alert("Enter key is pressed");
+                */
+            
+                const placeholder = newTitle.trim();
+                if (placeholder) {
+
+                    dropdownCount++;
+                    console.log(`new dropdown id: ${dropdownCount}`);
+                    const datalistId = `dropdown${dropdownCount}`;
+
+                    newGroup.innerHTML = `
+                        <input
+                            list="${placeholder}"
+                            id="${datalistId}"
+                            placeholder="${placeholder}"
+                            enterkeyhint="done"
+                        />
+                        <datalist id="${placeholder}">
+                            <option value="New Entry">Option-1</option>
+                        </datalist>
+                        <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
+                    `
+                    //inputField.style.display = "none";
+                    previousParentElement.insertAdjacentElement('afterend', newGroup);
+                    //alert("End of the Block");
+                    //container.appendChild(newGroup); ---Old Code -------------------
+                    const newDropDown = previousParentElement.nextElementSibling.firstElementChild;
+                    //console.log(previousParentElement.nextElementSibling.firstElementChild);
+                    addEventListenerToNewDropDown(newDropDown);
+                }
+        
+                    
+                
+            }
+
+            function combineInputs() {
+                const inputs = Array.from(
+                    document.querySelectorAll("#datalist-container input")
+                );
+
+                const combinedValues = inputs
+                    .map((input) => input.value.trim())
+                    .filter((value) => value !== "")
+                    .join(" ");
+
+                //combineInputs = `Create an image of ${combineInputs}`;
+                document.getElementById("output").innerText = `Create an image of ${combinedValues}`;
+
+            }
+            
+            function copyToClipboard() {
+                const outputDiv = document.getElementById("output");
+
+                if (!outputDiv.innerText) {
+                    alert("No prompt available to copy!");
+                    return;
+                }
+
+                const textToCopy = outputDiv.innerText;
+
+                navigator.clipboard
+                    .writeText(textToCopy)
+                    .then(() => alert("prompt copied to clipboard!"))
+                    .catch((err) =>
+                        alert("Failed to copy prompt. Error: " + err)
+                    );
+
+            }
+
+            function addTitle() {
+                newTitle = newDatalistInput.value;
+                newDatalistInput.value = "";
+                newInputTitlePanel.style.display = "none";
+                alert("New Title:  "+newTitle);
+                addNewDropDownToDisplay(currentPlusBtn);
+            }
+
+            function addEventListenerToNewDropDown(inputElement) {
+                inputElement.addEventListener("keydown", (e) => {
+                    // e.keyCode 13 is also equivalent to Enter key. 
+                    if ((e.key === "Enter" || e.keyCode === 13) && inputElement.value.trim()) {
+                        const value = inputElement.value.trim();
+                        const datalist = inputElement.nextElementSibling;
+                        //console.log(datalist); //For Debugging
+                        let newCustomValues = new Set();
+
+                        const allOptions = Array.from(datalist.options).map(
+                            (opt) => opt.value
+                        );
+                        if (
+                            !allOptions.includes(value.toLowerCase()) &&
+                            !newCustomValues.has(value.toLowerCase())
+                        ) {
+                            
+                            const newOption = document.createElement("option");
+                            
+                            var newValue = value.toLowerCase();
+                            newOption.value = newValue;
+                            datalist.appendChild(newOption);
+                            newCustomValues.add(newValue);
+                            
+                            alert(`Added new option: ${value}`);
+                            inputElement.value = "";
+                            
+                        } else {
+                            alert(`Value already exists!`);
+                        }
+                        e.preventDefault(); //To prevent default behaviour of Enter Key
+                    }
+                });
+            }
+            
+            
+            //-----Code Section For Download HTML Page Logic ------------------------
 
             function getPageFilename() {
                 const path = window.location.pathname;
@@ -323,6 +590,7 @@
                 // Handle empty filenames (e.g., trailing slash URLs)
                 return filename;
             }
+            
             function generateNextFilename() {
                 const currentFilename = getPageFilename();
                 
@@ -367,9 +635,8 @@
                 // Clean up
                 URL.revokeObjectURL(a.href);
             }
-            // Initial counter update
-            updateCounter();
+            
+            //-----------------------------------------------------------------------
         </script>
-    
-
-</body></html>
+    </body>
+</html>
