@@ -1,129 +1,2299 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Date & Time ? Timestamp Converter (Dark Theme)</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 2rem;
-    background-color: #242424;
-    color: #e0e0e0;
-    display: flex;
-    gap: 3rem;
-  }
-  .panel {
-    background: #393939;
-    padding: 1.5rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
-    flex: 1;
-  }
-  label, input, button {
-    font-size: 1.2rem;
-    margin: 0.5rem 0;
-    display: block;
-    width: 100%;
-    color: #e0e0e0;
-  }
-  input[type="datetime-local"], input[type="number"] {
-    padding: 0.3rem;
-    font-size: 1rem;
-    background-color: #2b2b2b;
-    border: 1px solid #444;
-    border-radius: 4px;
-    color: #e0e0e0;
-  }
-  input[type="datetime-local"]::placeholder,
-  input[type="number"]::placeholder {
-    color: #888;
-  }
-  button {
-    cursor: pointer;
-    margin-top: 0.7rem;
-    background-color: #3a7bd5;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    transition: background-color 0.3s;
-  }
-  button:hover {
-    background-color: #285f9b;
-  }
-  #result, #convertedResult {
-    margin-top: 1rem;
-    font-weight: bold;
-    min-height: 1.5em;
-    white-space: pre-line;
-    color: #a2d2ff;
-  }
-</style>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading List Creator</title>
+    <style>
+        :root {
+            --text-color: #8f8f8f;
+            --delete-btn-svg-size: 25px;
+            --edit-btn-svg-size: 25px;
+        }
+        body {
+            box-sizing: border-box;
+            background-color: #121212;
+            color: var(--text-color);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5em;
+        }
+        table {
+            box-sizing: border-box;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #444;
+            text-align: left;
+            /* max-width: 8em; */
+            width: 3em;
+            overflow-wrap: break-word;
+            font-size: 0.85em;
+            font-weight: bold;
+            padding-inline: 0.35em;
+            text-align: center;
+            padding-block: 0.5em;
+        }
+        th {
+            background-color: #1E1E1E;
+            /* width: 5em; */
+            overflow-wrap: break-word;
+        }
+        button {
+            background-color: #6200EE;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #3700B3;
+        }
+        .panel {
+            
+            background-color: #1E1E1E;
+            padding: 20px;
+            padding-top: 40px;
+            border-radius: 5px;
+            /* margin-top: 20px; */
+
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            
+            z-index: 10;
+            
+            display: grid;
+            place-items: center start;
+            grid-template-columns: 1fr 1fr 1fr;
+            justify-items: center;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            align-content: space-evenly;
+        }
+        .panel input, .panel select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #333333;
+            color: white;
+        }
+        
+        /* Table Column Specific RSS Properties--////////////////////////////////////////// */
+        .td-title,.th-title {
+            width: 5em;
+            min-width: 12em;
+            /* overflow-wrap: break-word; */
+            cursor:pointer;
+        }
+        .td-title {
+            color: #918e68;
+            /* font-size: 17px; */
+            background-color: #1b1b1b;
+            transition: all 0.2s ease-out;
+        }
+        .td-title:hover {
+            scale: 1.1;
+        }
+        .td-rating,.th-rating {
+            width: 3em;
+        }
+        .td-type,.th-type {
+            width: 3em;
+        }
+        .td-language,.th-language {
+            width: 3em;
+        }
+        .td-series,.th-series {
+            width: 3em;
+            cursor: pointer;
+        }
+        .td-series,.th-series {
+            width: 3em;
+        }
+        .td-tropes, .th-tropes {
+            min-width: 5em;
+            width: 10em;
+        }
+        .td-year,.th-year {
+            width:2.5em;
+        }
+        .td-link,.th-imdb-link{
+            width:2em;
+        }
+        .td-watch-priority,.th-watch-priority {
+            width: 3em;
+        }
+        .td-watch-status,.th-watch-status {
+            width: 3em;
+        }
+        .td-personal-grades,.th-personal-grades {
+            width: 3em;
+        }
+        .td-star-casts,.th-star-casts {
+            width: 3em;
+            cursor: pointer;
+        }
+        /* End of the BLock--////////////////////////////////////////// */
+
+        select,input {
+            
+            /* margin-bottom: 10px; */
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #333333;
+            color: #dadada;
+            /* padding-inline: 10px; */
+            padding-block: 0.25em;
+            width: 100%;
+        }
+        
+        svg {
+            fill: var(--text-color);
+            transition: 0.2s ease-out;
+        }
+        svg:hover {
+            fill: #1cff55;
+            scale: 1.5;
+        }
+        
+        
+
+        .edit-btns, .delete-btns {
+            opacity: 0%;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            /* transform: translate(-50%, -50%); */
+            /* width: 100%;
+            height: 100%; */
+            margin: 0;
+            padding: 15px;
+            background: transparent;
+            transition: 0.2s ease-out;
+
+        }
+        .edit-btns:hover, .delete-btns:hover {
+            opacity: 100%;
+            background-color: #a60032;
+        }
+        .edit-btns > svg, .delete-btns > svg {
+            height: var(--edit-btn-svg-size);
+            width: var(--edit-btn-svg-size);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: 0.2s ease-out;
+        }
+        .edit-btns > svg:hover, .delete-btns > svg:hover {
+            fill: #fdff76;
+            background-color: transparent;
+            scale: 1.1;
+        }
+        #add-entry-title, #update-entry-title {
+            display: none;
+            font-size: 20px;
+            margin: 0;
+            position: absolute;
+            top: 22px;
+        }
+        
+        #main-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #options-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            transform: translateX(-50%);
+            background-color: transparent;
+        }
+        #options-btn:hover {
+            background-color: #5a5a5a;
+        }
+        .options-panel {
+            display: none;
+            margin: 0;
+            position: fixed;
+            top: 80px;
+            right: 50px;
+            width: 30vw;
+            height: 20vh;
+            background-color: #3c3c3c;
+            border-radius: 0.5em;
+            padding: 2em;
+
+            align-items: center;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            z-index: 100;
+        }
+        /*---Added in v_2.6---*/
+        #save-status-btn {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            transform: translateX(-50%);
+            background-color: transparent;
+        }
+        #save-status-btn > svg {
+            fill: #15aa55;
+        }
+        /*-----------------------*/
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 8px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        #toggle-text {
+            margin-block: 2em;
+            width: 100;
+        }
+        #row-count-label {
+            display: block;
+            margin-top: 1rem;
+            padding-inline: 0.25rem;
+        }
+
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<div class="panel">
-  <h2>Date & Time to Timestamp</h2>
-  <label for="dateTimePicker">Choose Date & Time:</label>
-  <input type="datetime-local" id="dateTimePicker" />
-  <button id="getTimestampBtn">Get Timestamp</button>
-  <div id="result"></div>
+<h1 id="main-title">Reading List Collection</h1>
+
+<button onclick="togglePanel()">Add Entry</button>
+<!-- <button onclick="downloadCSV()">Download CSV</button> -->
+<button id="download-btn" onclick="downloadHTML()">Save Page</button>
+
+<!--Added in v_2.2 ---------------------->
+<input type="file" id="import-json" accept="application/json" style="display:none" />
+<button onclick="document.getElementById('import-json').click()">Select JSON</button>
+<button onclick="exportTableToJSON()">Export to JSON</button>
+
+<button id="save-status-btn">
+    <svg id="status-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" style="fill: rgb(21, 170, 85);"><path d="M480-280q83 0 141.5-58.5T680-480q0-83-58.5-141.5T480-680q-83 0-141.5 58.5T280-480q0 83 58.5 141.5T480-280Zm0 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"></path></svg>
+</button>
+
+<button id="options-btn" onclick="toggleOptionsPanel()">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"></path></svg>
+</button>
+<div class="options-panel" id="options-panel" style="display: none;">
+    <label class="switch">
+        <input type="checkbox" id="clearAllToggle" checked="">
+        <span class="slider"></span>
+        <div id="toggle-text">Clear All Fields</div>
+    </label>
+    <button id="clear-table-btn" onclick="clearTable()" title="Delete the entire Table?">Clear the Table</button>
 </div>
 
-<div class="panel">
-  <h2>Timestamp to Date & Time</h2>
-  <label for="timestampInput">Paste Timestamp (ms):</label>
-  <input type="number" id="timestampInput" placeholder="e.g. 1695042000000" />
-  <button id="convertTimestampBtn">Convert to Date & Time</button>
-  <div id="convertedResult"></div>
+<div class="panel" id="entryPanel" style="display: none;">
+    <h2 id="add-entry-title" style="display: unset;">Add New Entry</h2>
+    <h2 id="update-entry-title" style="display: none;">Update Entry</h2>
+
+    <input type="text" id="title" placeholder="Title (required)" required="">
+    <input type="text" id="author" placeholder="Author (required)" required="">
+    <input type="number" step="0.01" id="rating" placeholder="Goodreads Rating (required)" required="" min="0" max="5">
+    <input type="text" id="series" placeholder="Series">
+    <input type="number" step="0.1" id="position" placeholder="Position in Series" min="0" max="99">
+
+    <input list="genre" id="input-genre" class="datalist-type" placeholder="Select Genre" enterkeyhint="done">
+        <datalist id="genre">
+            <option value="Sci-Fi"></option>
+            <option value="Fantasy"></option>
+            <option value="Horror"></option>
+            <option value="Murder Mystery"></option>
+            <option value="Drama"></option>
+            <option value="History"></option>
+            <option value="Biography"></option>
+        <option value="Crime"></option></datalist>
+
+    <input list="sub-genre" id="input-sub-genre" class="datalist-type" placeholder="Select Sub-Genre" enterkeyhint="done">
+    <datalist id="sub-genre">
+        <option value="Space Opera"></option>
+        <option value="Exploration"></option>
+        <option value="Thriller"></option>
+        <option value="War"></option>
+        <option value="Crime"></option>
+        <option value="Romance"></option>
+        <option value="Alternate History"></option>
+    <option value="Alien Combat"></option><option value="Philosophy"></option></datalist>
+
+    <input type="text" id="tropes" placeholder="Tropes">
+    <input type="number" id="year" placeholder="Year" min="1000" max="5000">
+    <input type="url" id="gr-link" placeholder="Goodreads Link (required)" required="">
+    <input type="url" id="yt-link" placeholder="Youtube Link">
+    <input type="url" id="other-link" placeholder="Other Link">
+    <!-- <input type="number" id="reading-que" placeholder="Reading Que Rank" min="1" max="100" step="1.0"> -->
+
+    <input list="reading-priority" id="input-reading-priority" class="datalist-type" placeholder="Reading Priority" enterkeyhint="done">
+    <datalist id="reading-priority">
+        <option value="1. Highest"></option>
+        <option value="2. High"></option>
+        <option value="3. Medium"></option>
+        <option value="4. Low"></option>
+        <option value="5. After Previous Books"></option>
+        <option value="0. Read"></option>
+    </datalist>
+
+    <input list="reading-status" id="input-reading-status" class="datalist-type" placeholder="Reading Status" enterkeyhint="done">
+    <datalist id="reading-status">
+        <option value="-"></option>
+        <option value="Read"></option>
+    </datalist>
+
+    <input list="awards-won" id="input-awards-won" class="datalist-type" placeholder="Awards Won" enterkeyhint="done">
+    <datalist id="awards-won">
+        <option value="-"></option>
+        <option value="Hugo Award"></option>
+    <option value="Favorite Debut Goodreads Author"></option><option value="Goodread's Favorite Science Fiction"></option><option value="American Academy Of Arts And Letters Award"></option><option value="Hugo Award, Nebula Award"></option><option value="Locus Award"></option><option value="Hugo, Nebula &amp; Locus Awards"></option></datalist>
+
+    <!-- Added in v1.5--------///////////////////////////////---->
+    <button id="update-entry-btn" onclick="updateEntry()" style="display: none;">Update Reading list</button>
+
+    <button onclick="togglePanel()">Close</button>
 </div>
+<label id="row-count-label">No. of Rows: </label>
+<table id="watchlistTable">
+    <thead id="filter-head-panel">
+        <tr id="filter-row"><th class="th-title"><input id="filter-title" type="text" class="filter-search"></th><th class="th-author"><input id="filter-author" type="text" class="filter-search"></th><th class="th-rating"><input id="filter-rating" type="text" class="filter-search-number"></th><th class="th-series"><input id="filter-series" type="text" class="filter-search"></th><th class="th-position"><input id="filter-position" type="text" class="filter-search-number"></th><th class="th-genre"><select id="filter-genre" class="filter-dropdown"><option value="All">All</option><option value="Sci-Fi">Sci-Fi</option><option value="Fantasy">Fantasy</option><option value="Horror">Horror</option><option value="Murder Mystery">Murder Mystery</option><option value="Drama">Drama</option><option value="History">History</option><option value="Biography">Biography</option></select></th><th class="th-sub-genre"><select id="filter-sub-genre" class="filter-dropdown"><option value="All">All</option><option value="Space Opera">Space Opera</option><option value="Exploration">Exploration</option><option value="Thriller">Thriller</option><option value="War">War</option><option value="Crime">Crime</option><option value="Romance">Romance</option><option value="Alternate History">Alternate History</option><option value="Alien Combat">Alien Combat</option><option value="Philosophy">Philosophy</option></select></th><th class="th-tropes"><input id="filter-tropes" type="text" class="filter-search"></th><th class="th-year"><input id="filter-year" type="text" class="filter-search-number"></th><th class="th-gr-link"><input id="filter-gr-link" style="display: none;"></th><th class="th-yt-link"><input id="filter-yt-link" style="display: none;"></th><th class="th-other-link"><input id="filter-other-link" style="display: none;"></th><th class="th-reading-priority"><select id="filter-reading-priority" class="filter-dropdown"><option value="All">All</option><option value="1. Highest">1. Highest</option><option value="2. High">2. High</option><option value="3. Medium">3. Medium</option><option value="4. Low">4. Low</option><option value="5. After Previous Books">5. After Previous Books</option><option value="0. Read">0. Read</option></select></th><th class="th-reading-status"><select id="filter-reading-status" class="filter-dropdown"><option value="All">All</option><option value="-">-</option><option value="Read">Read</option></select></th><th class="th-awards-won"><select id="filter-awards-won" class="filter-dropdown"><option value="All">All</option><option value="-">-</option><option value="Hugo Award">Hugo Award</option><option value="Favorite Debut Goodreads Author">Favorite Debut Goodreads Author</option><option value="Goodread's Favorite Science Fiction">Goodread's Favorite Science Fiction</option><option value="American Academy Of Arts And Letters Award">American Academy Of Arts And Letters Award</option><option value="Hugo Award, Nebula Award">Hugo Award, Nebula Award</option><option value="Locus Award">Locus Award</option><option value="Hugo, Nebula &amp; Locus Awards">Hugo, Nebula &amp; Locus Awards</option></select></th></tr>
+    </thead>
+    <thead>
+        <tr>
+            <th class="th-title">Title</th>
+            <th class="th-author">Author</th>
+            <th class="th-rating">?</th>
+            <th class="th-series">Series</th>
+            <th class="th-position">#</th>
+            <th class="th-genre">Genre</th>
+            <th class="th-sub-genre">Sub-Genre</th>
+            <th class="th-tropes">Tropes</th>
+            <th class="th-year">Year</th>
+            <th class="th-gr-link">Good-Reads</th>
+            <th class="th-yt-link">You-Tube</th>
+            <th class="th-other-link">Other</th>
+            <th class="th-reading-priority">Reading Priority</th>
+            <th class="th-reading-status">Reading-Status</th>
+            <th class="th-awards-won">Awards Won</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Children of Time
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Adrian Tchaikovsky
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.30</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Children of Time</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Post Apocalyptic, Aliens</td>
+            <td class="td-year">2015</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/25499718-children-of-time?ac=1" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=zAfx0zbf910" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/ONuS-children-of-time-au403_t1/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Children of Ruin
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Adrian Tchaikovsky
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.05</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Children of Time</td>
+            <td class="td-position">2</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Post Apocalyptic, Aliens</td>
+            <td class="td-year">2019</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/40376072-children-of-ruin" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=Blvqri161NU" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/children-of-ruin/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">5. After Previous Books</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Children of Memory
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Adrian Tchaikovsky
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.01</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Children of Time</td>
+            <td class="td-position">3</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Post Apocalyptic, Aliens</td>
+            <td class="td-year">2022</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/60850767-children-of-memory" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=KayZHoXNvDg" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/adrian-tchaikovsky-audiobook/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">5. After Previous Books</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Three-Body Problem<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Liu Cixin<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.08</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Remembrance of Earth's Past</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Alien Combat</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Space Travel, War, Action</td>
+            <td class="td-year">2006</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/20518872-the-three-body-problem" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=SFiMxeUwe6c" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://tokybook.com/the-three-body-problem-audiobook-audiobook" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">0. Read</td>
+            <td class="td-reading-status">Read</td>
+            <td class="td-awards-won">Hugo Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Dark Forest
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Liu Cixin
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.41</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Remembrance of Earth's Past</td>
+            <td class="td-position">2</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Alien Combat</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Space Travel, War, Action</td>
+            <td class="td-year">2008</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/23168817-the-dark-forest" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=cdRTp0twoVo" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/the-dark-forest/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">5. After Previous Books</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Death's End
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Liu Cixin
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.41</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Remembrance of Earth's Past</td>
+            <td class="td-position">3</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Alien Combat</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Space Travel, War, Action</td>
+            <td class="td-year">NaN</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/25451264-death-s-end" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=NL7aT1dnoDI" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/81g-death-s-end-au431_t1/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">5. After Previous Books</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">House of Suns<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Alastair Reynolds<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.24</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Space Travel, Aliens, Clones</td>
+            <td class="td-year">2008</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/1126719.House_of_Suns?ac=1" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/8w0-house-of-suns-au434_t1/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">0. Read</td>
+            <td class="td-reading-status">Read</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Project Hail Mary<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Andy Weir<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.5</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Space Travel</td>
+            <td class="td-year">2021</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/54493401-project-hail-mary?from_choice=true" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link"><a href="https://tokybook.com/project-hail-mary" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">0. Read</td>
+            <td class="td-reading-status">Read</td>
+            <td class="td-awards-won">Goodread's Favorite Science Fiction</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Dark Matter<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Blake Crouch<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.14</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Thriller</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Mystery, Multiverse, Action</td>
+            <td class="td-year">2016</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/27833670-dark-matter?ac=1" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link"><a href="https://tokybook.com/dark-matter-audiobook-audiobook" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">0. Read</td>
+            <td class="td-reading-status">Read</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Recursion<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Blake Crouch<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.17</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Thriller</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Time Loop, Mystery, Multiverse, Action</td>
+            <td class="td-year">2019</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/42046112-recursion?from_choice=true" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=wK0GPq58Ojo" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">0. Read</td>
+            <td class="td-reading-status">Read</td>
+            <td class="td-awards-won">Goodread's Favorite Science Fiction</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Tau Zero<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Poul Anderson<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">3.83</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Time Travel, FTL, Space, Hard SF</td>
+            <td class="td-year">1970</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/240617.Tau_Zero" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=4HieIY-d4dc" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">0. Read</td>
+            <td class="td-reading-status">Read</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Ubik<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Philip K. Dick<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.11</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Thriller</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Classics,  Mystery</td>
+            <td class="td-year">1969</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/22590.Ubik?ac=1" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">2. High</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Childhood�s End<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Arthur C. Clarke<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.12</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Classics, Dystopian</td>
+            <td class="td-year">1953</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/414999.Childhood_s_End" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link"><a href="https://fulllengthaudiobooks.net/arthur-clarke-childhoods-end-book/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Rendezvous with Rama<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Arthur C. Clarke<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.12</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Rama</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Classics, Aliens, Mystery</td>
+            <td class="td-year">1973</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/112537.Rendezvous_with_Rama" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=pD2h5MIEii4" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://findaudiobook.app/rendezvous-with-rama-audio-book-by-arthur-c-clarke/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award, Nebula Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Blindsight
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Peter Watts
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.01</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Firefall</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Vampires, Space Travel, Mystery, Hard SF</td>
+            <td class="td-year">2006</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/48484.Blindsight" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=_R55gdpgwQQ" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Spin
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Robert Charles Wilson
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.04</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Spin</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Mystery, Dystopian, Alien Tech</td>
+            <td class="td-year">2005</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/910863.Spin?ac=1" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Fahrenheit 451
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Ray Bradbury
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">3.97</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Thriller</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Dystopian, Big Brother</td>
+            <td class="td-year">1953</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/13079982-fahrenheit-451" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=7P8vsa9g55I" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/fahrenheit-451-audiobook-free-1_audio0001_221101/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">3. Medium</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">American Academy Of Arts And Letters Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Mote in God's Eye
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Larry Niven ,  Jerry Pournelle
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.07</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Moties</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Hard SF, First Contact, Aliens, Mystery, Action</td>
+            <td class="td-year">1974</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/100365.The_Mote_in_God_s_Eye" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=Zf3DHLZkU-U" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://findaudiobook.app/the-mote-in-gods-eye-audiobook-larry-niven/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">2. High</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Man in the High Castle<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Philip K. Dick<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">3.59</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Alternate History</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Classics, Thriller, Action</td>
+            <td class="td-year">1962</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/216363.The_Man_in_the_High_Castle" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=2Vwal-FySkQ" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/the-man-in-the-high-castle-audiobook-free_audio0001_221101/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">4. Low</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Stranger in a Strange Land<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Robert A. Heinlein<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">3.92</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Classics, Philosophy, Religion, Drama</td>
+            <td class="td-year">1961</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/350.Stranger_in_a_Strange_Land" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=S6CnAIeN7dw" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://tokybook.com/stranger-in-a-strange-land-audiobook" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">4. Low</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Left Hand of Darkness<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Ursula K. Le Guin<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.1</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Hainish Cycle</td>
+            <td class="td-position">4</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Classics, Aliens, Drama</td>
+            <td class="td-year">1969</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/18423.The_Left_Hand_of_Darkness" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=UZd5a62g5U8" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/the-left-hand-of-darkness_audio0001_221101/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">3. Medium</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award, Nebula Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">A Fire Upon the Deep<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Vernor Vinge<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.14</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Zones of Thought</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Thriller, Action</td>
+            <td class="td-year">1992</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/77711.A_Fire_Upon_the_Deep" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=dlu_plUchak" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/a-fire-upon-the-deep/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">2. High</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">A Deepness in the Sky<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Vernor Vinge<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.32</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Zones of Thought</td>
+            <td class="td-position">2</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Thriller, Action</td>
+            <td class="td-year">1999</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/226004.A_Deepness_in_the_Sky" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">5. After Previous Books</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Children of the Sky<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Vernor Vinge<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">3.68</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Zones of Thought</td>
+            <td class="td-position">3</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Thriller, Action</td>
+            <td class="td-year">2011</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/10170545-the-children-of-the-sky" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">5. After Previous Books</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Speaker for the Dead<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Orson Scott Card<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.11</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Ender's Saga</td>
+            <td class="td-position">2</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Redemption, Aliens, Mystery</td>
+            <td class="td-year">1986</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/7967.Speaker_for_the_Dead" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=VQpR7-1gwik" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/speaker-for-the-dead-audiobook-free-audio0001-221102/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award, Nebula Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Sparrow<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Mary Doria Russell<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.14</td>
+            <td class="td-series" onclick="copyToClipboard(this)">The Sparrow</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Thriller</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Philosophy</td>
+            <td class="td-year">1996</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/334176.The_Sparrow" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">3. Medium</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Calculating God
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Robert J. Sawyer
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">3.86</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Philosophy</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, God, Religion</td>
+            <td class="td-year">2000</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/264950.Calculating_God" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">4. Low</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">-</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Ringworld<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Larry Niven<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">3.94</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Ringworld</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Classics, Aliens, Space</td>
+            <td class="td-year">1970</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/61179.Ringworld" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=4DMkDqIjEuI" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/ringworld_audio0001_221101/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">3. Medium</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award, Nebula Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Gods Themselves<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Isaac Asimov<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.09</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Space Opera</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Aliens, Alien Tech, Multiverse</td>
+            <td class="td-year">1972</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/41821.The_Gods_Themselves" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=bwz8ANABslk" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">3. Medium</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award, Nebula Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Dispossessed<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Ursula K. Le Guin<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.25</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Hainish Cycle</td>
+            <td class="td-position">6</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Philosophy</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Classics, Politics, Space, Utopia</td>
+            <td class="td-year">1974</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/13651.The_Dispossessed" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/the-dispossessed_audio0001_221101/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">3. Medium</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award, Nebula Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Gateway
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Frederik Pohl
+                <button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.06</td>
+            <td class="td-series" onclick="copyToClipboard(this)">Heechee Saga</td>
+            <td class="td-position">1</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Exploration</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Alien Tech, AI</td>
+            <td class="td-year">1977</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/218427.Gateway" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=hpgLdBbI75c" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link">-</td>
+            <td class="td-reading-priority">3. Medium</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo Award, Nebula Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">The Lathe of Heaven<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Ursula K. Le Guin<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.13</td>
+            <td class="td-series" onclick="copyToClipboard(this)">-</td>
+            <td class="td-position">-</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">-</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Dream, Alternate Reality</td>
+            <td class="td-year">1971</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/59924.The_Lathe_of_Heaven" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=dFT-x4vAADs" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://archive.org/details/the-lathe-of-heaven/Lathe+of+Heaven+01.mp3" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Locus Award</td>
+            </tr><tr class="data-table-row" >
+            
+            <td class="td-title" onclick="copyToClipboard(this)">Network Effect<button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg></button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">Martha Wells<button title="Delete Row" class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg></button>
+            </td>
+            <td class="td-rating">4.47</td>
+            <td class="td-series" onclick="copyToClipboard(this)">The Murderbot Diaries</td>
+            <td class="td-position">5</td>
+            <td class="td-genre">Sci-Fi</td>
+            <td class="td-sub-genre">Thriller</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">Cyberpunk, Robots, Android, Action, Comedy, Future-Tech, Space</td>
+            <td class="td-year">2020</td>
+            <td class="td-link"><a href="https://www.goodreads.com/book/show/52381770-network-effect" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://www.youtube.com/watch?v=_vy8Mqhdz6o" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg></a></td>
+            <td class="td-link"><a href="https://galaxyaudiobook.com/network-effect-audiobook/" target="_blank" style="color:white; text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg></a></td>
+            <td class="td-reading-priority">1. Highest</td>
+            <td class="td-reading-status">-</td>
+            <td class="td-awards-won">Hugo, Nebula &amp; Locus Awards</td>
+            </tr></tbody>
+</table>
 
 <script>
-  // Helper to format date with short month name
-  function formatDateWithShortMonth(date) {
-    const monthShort = date.toLocaleString('default', { month: 'short' });
-    const day = date.getDate();
-    const year = date.getFullYear();
-    const time = date.toLocaleTimeString();
-    return `${monthShort} ${day}, ${year} ${time}`;
-  }
+    
+    let watchlistEntries = []; // Array to hold watchlist entries
+    let allEntries = []; // Array of {entry, firestoreDocId}
+    const downloadBtn = document.getElementById('downloadBtn');
+    const linkSVG1 = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg>`;
+    const linkSVG2 = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"></path></svg>`;
+    const linkSVG3 = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"></path></svg>`;
+    const deleteBtnSVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"></path></svg>`;
+    const editBtnSVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg>`;
+    const addEntryBtn = document.getElementById('add-entry-btn');
+    const updateEntryBtn = document.getElementById('update-entry-btn');
+    const addEntryTitle = document.getElementById("add-entry-title");
+    const updateEntryTitle = document.getElementById("update-entry-title");
+    const optionsPanel = document.getElementById('options-panel'); //--Options Panel--//////////
+    const toggle = document.getElementById('clearAllToggle');
+    const toggleText = document.getElementById("toggle-text");
+    let rowCountLabel = document.getElementById("row-count-label");
+    let rowToBeUpdated = null;
+    let flag_clearAll = true;
+    let statusSVG = document.getElementById('status-svg'); //Added in v_1.9
+    let flag_savedPage = true; //Added in v_1.9
 
-  // Left panel: date/time -> timestamp
-  const dateTimePicker = document.getElementById("dateTimePicker");
-  const getTimestampBtn = document.getElementById("getTimestampBtn");
-  const resultDiv = document.getElementById("result");
-  
-  getTimestampBtn.addEventListener("click", () => {
-    if (!dateTimePicker.value) {
-      resultDiv.textContent = "Please select a date and time.";
-      return;
+    //--Getting access to the Input Elements on Entry/Edit Panel---////////////////////////////////
+    const panel = document.getElementById('entryPanel'); //--Main Panel
+    const panelTitle = panel.querySelector("#title");
+    const panelAuthor = panel.querySelector("#author");
+    const panelRating = panel.querySelector("#rating");
+    const panelSeries = panel.querySelector("#series");
+    const panelPosition = panel.querySelector("#position");
+    const panelGenre = panel.querySelector("#input-genre");
+    const panelSubGenre = panel.querySelector("#input-sub-genre");
+    const panelTropes = panel.querySelector("#tropes");
+    const panelYear = panel.querySelector("#year");
+    const panelGrLink = panel.querySelector("#gr-link");
+    const panelYtLink = panel.querySelector("#yt-link");
+    const panelOtherLink = panel.querySelector("#other-link");
+    const panelReadingPriority = panel.querySelector("#input-reading-priority");
+    const panelReadingStatus = panel.querySelector("#input-reading-status");
+    const panelAwardsWon = panel.querySelector("#input-awards-won");
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+	// ====== ENTER YOUR FIREBASE CONFIG HERE ======
+    const firebaseConfig = {
+        apiKey: "AIzaSyBGM_ws-4leOmvLLzIEU62y36cHLjYeezQ",
+        authDomain: "my-bookmarks-01.firebaseapp.com",
+        projectId: "my-bookmarks-01",
+        storageBucket: "my-bookmarks-01.firebasestorage.app",
+        messagingSenderId: "202931759065",
+        appId: "1:202931759065:web:ccfa3cf456370d839a5bc8"
+    };
+    // =============================================
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Toggle the visibility of the entry panel
+    function togglePanel() {
+        clearFields();
+        addEntryBtn.style.display ="unset";
+        updateEntryBtn.style.display ="none";
+        addEntryTitle.style.display = "unset";
+        updateEntryTitle.style.display = "none";
+        //const panel = document.getElementById('entryPanel');
+        panel.style.display = panel.style.display === 'grid' ? 'none' : 'grid';
     }
-    const selectedDateTime = new Date(dateTimePicker.value);
-    const timestamp = selectedDateTime.getTime();
-    const formattedDate = formatDateWithShortMonth(selectedDateTime);
-    resultDiv.textContent = `Timestamp (ms since Unix epoch): ${timestamp}\n(${formattedDate})`;
-  });
-  
-  // Right panel: timestamp -> date/time
-  const timestampInput = document.getElementById("timestampInput");
-  const convertTimestampBtn = document.getElementById("convertTimestampBtn");
-  const convertedResult = document.getElementById("convertedResult");
-  
-  convertTimestampBtn.addEventListener("click", () => {
-    const timestamp = Number(timestampInput.value);
-    if (!timestampInput.value || isNaN(timestamp) || timestamp < 0) {
-      convertedResult.textContent = "Please enter a valid positive timestamp in milliseconds.";
-      return;
+    
+    // Open Edit Panel to edit a selected row from the table
+    function openEditPanel(editButton) {
+        event.stopPropagation();
+
+        //--To auto scroll to top of the webpage so that the edit panel will be visible--////
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        //---Getting Access to the Editing Row--///////////
+        const row = editButton.parentElement.parentElement;
+        rowToBeUpdated = row;
+
+        //---Getting Access to Each Cell Element of The Editing Row--///////////
+        const title = row.querySelector('.td-title');
+        const author = row.querySelector('.td-author');
+        const rating = row.querySelector('.td-rating');
+        const series = row.querySelector('.td-series');
+        const position = row.querySelector('.td-position');
+        const genre = row.querySelector('.td-genre');
+        const subGenre = row.querySelector('.td-sub-genre');
+        const tropes = row.querySelector('.td-tropes');
+        const year = row.querySelector('.td-year');
+        const linkArray = row.querySelectorAll('.td-link');
+        const grLink = linkArray[0].firstElementChild ? linkArray[0].firstElementChild : "-";
+        const ytLink = linkArray[1].firstElementChild ? linkArray[1].firstElementChild : "-";
+        const otherLink = linkArray[2].firstElementChild ? linkArray[2].firstElementChild : "-";
+        const readingPriority = row.querySelector('.td-reading-priority');
+        const readingStatus = row.querySelector('.td-reading-status');
+        const awardsWon = row.querySelector('.td-awards-won');
+        ////////////////////////////////////////////////////////////////////////
+
+
+        //--Populating Values from the Editing Row to Edit Panel Input Fields----///////////
+        panelTitle.value = title.textContent.trim();
+        panelAuthor.value = author.textContent.trim();
+        panelRating.value = rating.textContent.trim();
+        panelSeries.value = series.textContent.trim();
+        panelPosition.value = position.textContent.trim();
+        panelGenre.value = genre.textContent.trim();
+        panelSubGenre.value = subGenre.textContent.trim();
+        panelTropes.value = tropes.textContent.trim();
+        panelYear.value = year.textContent.trim();
+        panelGrLink.value = grLink;
+        panelYtLink.value = ytLink;
+        panelOtherLink.value = otherLink;
+        panelReadingPriority.value = readingPriority.textContent.trim();
+        panelReadingStatus.value = readingStatus.textContent.trim();
+        panelAwardsWon.value = awardsWon.textContent.trim();
+        //////////////////////////////////////////////////////////////////////////////
+        
+        addEntryBtn.style.display ="none";
+        updateEntryBtn.style.display ="unset";
+        addEntryTitle.style.display = "none";
+        updateEntryTitle.style.display = "unset";
+        panel.style.display = panel.style.display === 'grid' ? 'none' : 'grid';
+
     }
-    const date = new Date(timestamp);
-    if (isNaN(date.getTime())) {
-      convertedResult.textContent = "Invalid timestamp value.";
-      return;
+
+    // Generate unique id
+    function uid() {
+        return (
+            "_" +
+            Math.random().toString(36).substr(2, 9) +
+            String(Date.now())
+        );
     }
-    const formattedDate = formatDateWithShortMonth(date);
-    convertedResult.textContent = `Date & Time: ${formattedDate}`;
-  });
+
+    // Add a new entry to the table
+    async function addEntry() {
+        
+        const title = panelTitle.value.trim() === "" ? "-" : panelTitle.value.trim();
+        const author = panelAuthor.value.trim() === "" ? "-" : panelAuthor.value.trim();      
+        const parsedValue1 = parseFloat(panelRating.value);
+        const rating = Number.isNaN(parsedValue1) ? "-" : parseFloat(parsedValue1.toFixed(2));
+        const series = panelSeries.value.trim() === "" ? "-" : panelSeries.value.trim();
+        const parsedValue2 = parseFloat(panelPosition.value);
+        const position = Number.isNaN(parsedValue2) ? "-" : parseInt(parsedValue2);
+        const genre = panelGenre.value.trim() === "" ? "-" : panelGenre.value.trim();
+        const subGenre = panelSubGenre.value.trim() === "" ? "-" : panelSubGenre.value.trim();
+        const tropes = panelTropes.value.trim() === "" ? "-" : panelTropes.value.trim();
+        const parsedValue3 = parseFloat(panelYear.value);
+        const year = Number.isNaN(parsedValue3) ? "-" : parseInt(parsedValue3);
+        const grLink = panelGrLink.value.trim();
+        const ytLink = panelYtLink.value.trim();
+        const otherLink = panelOtherLink.value.trim();
+        const readingPriority = panelReadingPriority.value.trim() === "" ? "-" : panelReadingPriority.value.trim();
+        const readingStatus = panelReadingStatus.value.trim() === "" ? "-" : panelReadingStatus.value.trim();
+        const awardsWon = panelAwardsWon.value.trim() === "" ? "-" : panelAwardsWon.value.trim();
+
+        // Create a new entry object
+        const entry = {
+            title: title,
+            author: author,
+            rating: rating,
+            series: series,
+            position: position,
+            genre: genre,
+            subGenre: subGenre,
+            tropes: tropes,
+            year: year,
+            grLink: grLink,
+            ytLink: ytLink,
+            otherLink: otherLink,
+            readingPriority: readingPriority,
+            readingStatus: readingStatus,
+            awardsWon: awardsWon,
+            timestamp: Date.now()
+
+        };
+
+        // Push the new entry to the entries array
+        //watchlistEntries.push(newEntry);
+        //allEntries.push(entry);
+
+        // Add the new entry to the table
+        const tableBody = document.querySelector('#watchlistTable tbody');
+        
+        const newRow = tableBody.insertRow();
+        newRow.className = "data-table-row";
+        
+        newRow.innerHTML = `
+            
+            <td class="td-title" onclick="copyToClipboard(this)">${title}
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)">${editBtnSVG}</button>
+            </td>
+            <td class="td-author" onclick="copyToClipboard(this)">${author}
+                <button title="Delete Row"class="delete-btns" id="row-delete-btn">${deleteBtnSVG}</button>
+            </td>
+            <td class="td-rating">${rating}</td>
+            <td class="td-series" onclick="copyToClipboard(this)">${series}</td>
+            <td class="td-position">${position}</td>
+            <td class="td-genre">${genre}</td>
+            <td class="td-sub-genre">${subGenre}</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">${tropes}</td>
+            <td class="td-year">${year}</td>
+            <td class="td-link">${generateLinkCell(grLink, linkSVG1)}</td>
+            <td class="td-link">${generateLinkCell(ytLink, linkSVG2)}</td>
+            <td class="td-link">${generateLinkCell(otherLink, linkSVG3)}</td>
+            <td class="td-reading-priority">${readingPriority}</td>
+            <td class="td-reading-status">${readingStatus}</td>
+            <td class="td-awards-won">${awardsWon}</td>
+            `;
+
+        //--Older Code inside newRow.innerHTML
+        /* <button title="Delete Row"class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)">${deleteBtnSVG}</button> */
+
+        newRow.removeAttribute('style');
+        clearFields();
+
+        //-- Change saved status to false & change radio button to Red----Added in v_2.6---
+        flag_savedPage = false;
+        changeSaveStatus();
+
+        const delBtn = newRow.querySelector('#row-delete-btn');
+        //console.log(delBtn);
+
+        let currentDocId = null;
+        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+            window.alert("Not Stored to firebase");
+            entry._id = uid();
+            // localEntries.push(entry);
+            // Push to allEntries, no Firestore doc id
+            allEntries.push({ entry: entry, firestoreDocId: null });
+            //addRow(entry, null);
+        } else {
+            try {
+                let docRef = await db
+                    .collection("My_ReadingList_01")
+                    .add(entry);
+                // addRow(entry, docRef.id);
+                allEntries.push({ entry: entry, firestoreDocId: docRef.id });
+                currentDocId = docRef.id; //--to use the docref.id variable outside of this code block
+                //addRow(entry, docRef.id);
+            } catch (err) {
+                alert("Error saving to Firebase: " + err.message);
+            }
+    }
+    
+        delBtn.onclick = async function (e) {
+            e.stopPropagation();
+            if (!confirm("Delete the Selected Row?")) return;
+            if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+                /*  if (entry._id) {
+                    let i = localEntries.findIndex(
+                        (x) => x._id === entry._id
+                    );
+                    if (i !== -1) localEntries.splice(i, 1);
+                } */
+                newRow.remove();
+                //console.log("No. of Rows:  " + allEntries.length); // For debugging
+                updateRowCountLabel();
+            } else {
+                try {
+                    if (currentDocId) {
+                        await db
+                            .collection("My_ReadingList_01")
+                            .doc(currentDocId)
+                            .delete();
+                        newRow.remove();
+
+                        // TO delete the entry from the allEntires Object
+                        const index = allEntries.findIndex(entry => entry.firestoreDocId === currentDocId);
+                        if (index !== -1) {
+                            allEntries.splice(index, 1);
+                        }
+                        //console.log("No. of Rows:  " + allEntries.length); // For debugging
+                        updateRowCountLabel();
+                    } else {
+                        alert(
+                            "Could not delete: missing Firestore document id."
+                        );
+                        console.log("No. of Rows:  " + allEntries.length); // For debugging
+                    }
+                } catch (err) {
+                    alert("Delete failed: " + err.message);
+                    console.log("No. of Rows:  " + allEntries.length); // For debugging
+                }
+            }
+        };
+        console.log("No. of Rows:  " + allEntries.length); // For debugging
+        updateRowCountLabel();
+
+    }
+    
+    // Update an existing entry to the Table
+    function updateEntry() {
+        
+        ///----Getting Access to the Row Elements to be Updated ----///////////////////
+        const title = rowToBeUpdated.querySelector('.td-title');
+        const author = rowToBeUpdated.querySelector('.td-author');
+        const rating = rowToBeUpdated.querySelector('.td-rating');
+        const series = rowToBeUpdated.querySelector('.td-series');
+        const position = rowToBeUpdated.querySelector('.td-position');
+        const genre = rowToBeUpdated.querySelector('.td-genre');
+        const subGenre = rowToBeUpdated.querySelector('.td-sub-genre');
+        const tropes = rowToBeUpdated.querySelector('.td-tropes');
+        const year = rowToBeUpdated.querySelector('.td-year');
+        const linkArray = rowToBeUpdated.querySelectorAll('.td-link');
+        const grLink = linkArray[0];
+        const ytLink = linkArray[1];
+        const otherLink = linkArray[2];
+        //const readingQue = rowToBeUpdated.querySelector('.td-reading-que');
+        const readingPriority = rowToBeUpdated.querySelector('.td-reading-priority');
+        const readingStatus = rowToBeUpdated.querySelector('.td-reading-status');
+        const awardsWon = rowToBeUpdated.querySelector('.td-awards-won');
+        ///////////////////////////////////////////////////////////////////////////////
+
+        //--Populating Values from Edit Panel Input Fields to the Editing Row----///////////
+        
+        title.firstChild.nodeValue = panelTitle.value.trim() === "" ? "-" : panelTitle.value.trim();
+        author.firstChild.nodeValue = panelAuthor.value.trim() === "" ? "-" : panelAuthor.value.trim();
+        const parsedValue1 = parseFloat(panelRating.value);
+        rating.firstChild.nodeValue = Number.isNaN(parsedValue1) ? "-" : parseFloat(parsedValue1.toFixed(2));
+        series.firstChild.nodeValue = panelSeries.value.trim() === "" ? "-" : panelSeries.value.trim();
+        const parsedValue2 = parseFloat(panelPosition.value);
+        position.firstChild.nodeValue = Number.isNaN(parsedValue2) ? "-" : parseInt(parsedValue2);
+        genre.firstChild.nodeValue = panelGenre.value.trim() === "" ? "-" : panelGenre.value.trim();
+        subGenre.firstChild.nodeValue = panelSubGenre.value.trim() === "" ? "-" : panelSubGenre.value.trim();
+        tropes.firstChild.nodeValue = panelTropes.value.trim() === "" ? "-" : panelTropes.value.trim();
+        const parsedValue3 = parseFloat(panelYear.value);
+        year.firstChild.nodeValue = Number.isNaN(parsedValue3) ? "-" : parseInt(parsedValue3);
+        grLink.innerHTML = `${generateLinkCell(panelGrLink.value.trim(), linkSVG1)}`;
+        ytLink.innerHTML = `${generateLinkCell(panelYtLink.value.trim(), linkSVG2)}`;
+        otherLink.innerHTML = `${generateLinkCell(panelOtherLink.value.trim(), linkSVG3)}`;
+        readingPriority.firstChild.nodeValue = panelReadingPriority.value.trim() === "" ? "-" : panelReadingPriority.value.trim();
+        readingStatus.firstChild.nodeValue = panelReadingStatus.value.trim() === "" ? "-" : panelReadingStatus.value.trim();
+        awardsWon.firstChild.nodeValue = panelAwardsWon.value.trim() === "" ? "-" : panelAwardsWon.value.trim();
+        ////////////////////////////////////////////////////////////////////////////////////
+
+        alert ("Data Updated!");
+
+        //-- Change saved status to false & change radio button to Red----Added in v_2.6---
+        flag_savedPage = false;
+        changeSaveStatus();
+
+        //--Error Proof Approach to change the Text value without removing the button in the td--//
+        /*
+        if (title.firstChild.nodeType === Node.TEXT_NODE) {
+            title.firstChild.nodeValue = panelTitle.value.trim();
+        } */
+    }
+    
+    // To check if the link(href) value is empty or not
+    function generateLinkCell(link, svg) {
+        if (link && link.trim() && link.trim()!== "-") {
+            return `<a href="${link}" target="_blank" style="color:white; text-decoration:none;">${svg}</a>`;
+        } else {
+            return '-';
+        }
+    }
+
+    // To Delete the selected Row from the Table
+    /* function deleteRow(button) {
+        event.stopPropagation();
+        //console.log(button.parentElement.parentElement);
+        if (confirm("Do you want to delete this row?")) {
+            button.parentElement.parentElement.remove();
+            button.parentElement.parentElement = null;
+
+            //-- Change saved status to false & change radio button to Red----Added in v_2.6---
+            flag_savedPage = false;
+            changeSaveStatus();
+        }
+        
+    } */
+    
+    //To toggle the visibility of the Options Panel
+    function toggleOptionsPanel() {
+        optionsPanel.style.display = optionsPanel.style.display === 'flex' ? 'none' : 'flex';
+
+    }
+    
+    // To toggle the flag "clearAll" settings 
+    toggle.addEventListener('change', function() {
+        flag_clearAll = this.checked;
+        if(flag_clearAll) {
+            toggleText.textContent = "Clear All Fields";
+            console.log('flag_clearAll:  ' + flag_clearAll);
+        }else {
+            toggleText.textContent = "Same Series Books";
+            console.log('flag_clearAll:  ' + flag_clearAll);
+        }
+        //alert('flag_clearAll:  ' + flag_clearAll);
+    });
+
+    // Clear input fields after adding an entry
+    function clearFields() {
+        panelTitle.value = '';
+        panelRating.value = '';
+        panelPosition.value = '';
+        panelYear.value = '';
+        panelGrLink.value = '';
+        panelYtLink.value = '';
+        panelOtherLink.value = '';
+        panelAwardsWon.value = '';
+        
+        
+        //---Clear the Repeating fields for the Same Series Books if clear all flag is True--////
+        if (flag_clearAll) {
+            panelAuthor.value = '';
+            panelSeries.value = '';
+            panelGenre.value = '';
+            panelSubGenre.value = '';
+            panelTropes.value = '';
+            panelReadingPriority.value = '';
+            panelReadingStatus.value = '';
+            
+        }
+
+    }
+    
+    
+
+    // Wait for the webpage to load and then Add input event listeners-----
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Populate filter dropdown on page load
+        //populateFilterDropdown();
+
+        // Get the div with id 'datalist-container'
+        const datalistContainer = document.getElementById('entryPanel');
+
+        // Check if the div exists
+        if (datalistContainer) {
+            // Get all input elements inside the div
+            const inputElements = datalistContainer.querySelectorAll('.datalist-type');
+            //console.log(inputElements);
+
+            // Loop through each input element and add an event listener
+            inputElements.forEach(function(inputElement) {
+                
+                inputElement.addEventListener("keydown", (e) => {
+                    // e.keyCode 13 is also equivalent to Enter key. 
+                    if ((e.key === "Enter" || e.keyCode === 13) && inputElement.value.trim()) {
+                        const value = inputElement.value.trim();
+                        var newValue = value.toLowerCase().split(" ").map(
+                                    (word) =>
+                                        word.charAt(0).toUpperCase() + word.slice(1)
+                                ).join(" ");
+                        const datalist = inputElement.nextElementSibling;
+                        console.log(datalist.id); //For Debugging
+                        let newCustomValues = new Set();
+
+                        const allOptions = Array.from(datalist.options).map(
+                            (opt) => opt.value
+                        );
+                        if (
+                            !allOptions.includes(newValue) &&
+                            !newCustomValues.has(newValue)
+                        ) {
+
+                            const newOption = document.createElement("option");
+                            newOption.value = newValue;
+                            datalist.appendChild(newOption);
+                            newCustomValues.add(newValue);
+                            //newCustomValues.add(newValue.toLowerCase());
+
+                            //---Code to update filter dropdown menu -------------------------------------
+                            const filterDropdownToUpdate = document.getElementById(`filter-${datalist.id}`);
+                            const newFilterOption = document.createElement("option");
+                            newFilterOption.value = newValue;
+                            newFilterOption.textContent = newValue;
+                            filterDropdownToUpdate.appendChild(newFilterOption);
+                            
+                            alert(`Added new option: ${value}`);
+                            inputElement.value = "";
+
+                            {
+                                /* ---- Old Code------------------------------------------------
+                                console.log(!allOptions.includes(value.toLowerCase()));
+                                console.log(!newCustomValues.has(value.toLowerCase()));
+                                console.log(allOptions);
+                                var newValue = value.toLowerCase();
+                                var newValue = value.split(" ").map(
+                                        (word) =>
+                                            word.charAt(0).toUpperCase() + word.slice(1)
+                                    ).join(" ");
+                                -----------------------------------------------------------------
+                            */ }
+        
+                        } else {
+                            alert(`Value already exists!`);
+                        }
+                        e.preventDefault(); //To prevent default behaviour of Enter Key
+                    }
+                });
+
+            });
+        } else {
+            console.log('Div with id "datalist-container" not found.');
+        }
+    });
+
+    ///////////////-----Code Section For Download HTML Page Logic ----//////////////////////////
+    function getPageFilename() {
+        const path = window.location.pathname;
+        let filename = path.substring(path.lastIndexOf('/') + 1);
+        filename = filename.split('?')[0]; // Remove query parameters
+        filename = decodeURIComponent(filename);
+        console.log(filename);
+        
+        // Handle empty filenames (e.g., trailing slash URLs)
+        return filename;
+    }
+                
+    function generateNextFilename() {
+        const currentFilename = getPageFilename();
+        
+        // Split into base name and extension
+        const [base, extension = 'html'] = currentFilename.split(/\.([^.]+)$/);
+        
+        
+        // Find trailing numbers in base name
+        const numberMatch = base.match(/_(\d+)$/);
+        //const numberMatch = base.match(/(\D*)(\d+)$/);
+        
+        let newBase;
+        if (numberMatch) {
+            // Increment existing number
+            const newNumber = parseInt(numberMatch[1], 10) + 1;
+            newBase = base.replace(/_\d+$/, `_${newNumber}`);
+            //newBase = `${prefix}${newNumber}`;
+        } else {
+            // Add new number suffix
+            newBase = `${base}_1`;
+        }
+        return `${newBase}.${extension}`;
+        
+    }
+
+    function downloadHTML() {
+    
+        toggleText.textContent = "Clear All Fields"; //----Added in v_2.6---
+
+        //-- Change saved status to false & change radio button to Red----Added in v_2.6---
+        flag_savedPage = true;
+        changeSaveStatus();
+
+        // Get the current HTML content
+        const htmlContent = document.documentElement.outerHTML;
+
+        // Create a Blob object with the HTML content
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+
+        // Create a temporary anchor element
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        // Set the file name for download
+        a.download = generateNextFilename();
+
+        // Programmatically click the anchor to trigger download
+        a.click();
+
+        // Clean up
+        URL.revokeObjectURL(a.href);
+    }
+    /////////////////--End of Code Section For Download HTML Page Logic ///////////////////////
+
+
+    /* Call this on page load to populate filter dropdown
+    function populateFilterDropdown() {
+        const filterSelect = document.getElementById('filter-media-type');
+        const filterDatalist = document.getElementById('media-type');
+        //console.log(filterDatalist);
+
+        // Clear existing options except "All"
+        filterSelect.innerHTML = '<option value="All">All</option>';
+
+        // Extract options from datalist and add to dropdown
+        Array.from(filterDatalist.options).forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option.value;
+            opt.textContent = option.value;
+            filterSelect.appendChild(opt);
+        });
+    } 
+    */
+
+    //Function to filter table rows based on selected filter-type------------------------
+    function filterTableUsingDropdown(filter,position) {
+
+        const filterValue = document.getElementById(filter).value;
+        //console.log(document.getElementById(filter)); //--for debugging
+        const tableBody = document.querySelector('#watchlistTable tbody');
+        const rows = tableBody.rows;
+
+        for (let row of rows) {
+            const filterCell = row.cells[position-1]; // for ex. 2nd column (media-type)
+            //console.log(row.cells[position-1].textContent);  //--for debugging
+            if (filterValue === "All" || filterCell.textContent === filterValue) {
+                row.style.display = ""; // show row
+            } else {
+                row.style.display = "none"; // hide row
+            }
+        }
+    }
+
+    function filterTableUsingInput(filter,position) {
+
+        const filterValue = document.getElementById(filter).value;
+        //console.log(document.getElementById(filter)); //--for debugging
+        const tableBody = document.querySelector('#watchlistTable tbody');
+        const rows = tableBody.rows;
+
+        for (let row of rows) {
+            const filterCell = row.cells[position-1]; // for ex. 2nd column (media-type)
+            //console.log(row.cells[position-1].textContent);  //--for debugging
+            const text = filterCell.textContent.toLowerCase();
+            if (filterValue === "All" || text.includes(filterValue.toLowerCase())) {
+                row.style.display = ""; // show row
+            } else {
+                row.style.display = "none"; // hide row
+            }
+        }
+    }
+    
+    ////// This Block of Code is for Scalable Feature for dynamic filter creations & functionality////
+    // Function to collect panel element data
+    function collectPanelElementsData(panelId) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return [];
+        
+        const elementsData = [];
+        let position = 1;
+
+        Array.from(panel.children).forEach(el => {
+            //console.log(el.tagName);
+            // Skip non-relevant elements
+            //if (['H2', 'BUTTON', 'DATALIST'].includes(el.tagName)) return;
+            if (['H2', 'BUTTON'].includes(el.tagName)) return;
+
+            // Handle datalist-linked inputs
+            if (el.tagName === 'INPUT' && el.list) {
+                const datalist = document.getElementById(el.list);
+                if (datalist) {
+                    elementsData.push({
+                        id: datalist.id,
+                        type: 'datalist',
+                        position: position++
+                    });
+                }
+                return;
+            }
+
+            // Handle regular elements
+            if (el.id) {
+                elementsData.push({
+                    id: el.id,
+                    type: el.type || el.tagName.toLowerCase(),
+                    position: position++
+                });
+            }
+        });
+
+        return elementsData;
+    }
+    //test the above function--------------
+    //console.log(collectPanelElementsData('entryPanel'));
+
+    // Function to create filter row
+    
+    function createFilterRow() {
+        const data = collectPanelElementsData('entryPanel');
+        //console.log(data);
+        const filterRow = document.getElementById('filter-row') || document.createElement('tr');
+        filterRow.id = 'filter-row';
+        filterRow.innerHTML = '';
+
+        data.forEach(item => {
+            const th = document.createElement('th');
+            if (item.id =="link") {
+                th.className ="th-link";
+            }
+            else {
+                th.className = `th-${item.id}`;
+            }
+            
+            
+            if (item.type === 'datalist') {
+                // Create dropdown for datalist
+                const select = document.createElement('select');
+                select.id = `filter-${item.id}`;
+                select.className = 'filter-dropdown';
+                
+                // Add 'All' option
+                const allOption = new Option('All', 'All');
+                select.add(allOption);
+                
+                // Populate options
+                const datalist = document.getElementById(item.id);
+                if (datalist) {
+                    datalist.querySelectorAll('option').forEach(option => {
+                        select.add(new Option(option.value, option.value));
+                    });
+                }
+                
+                th.appendChild(select);
+
+
+            } else if (item.type ==="url"){
+                const input = document.createElement('input');
+                input.id = `filter-${item.id}`;
+                
+                input.style.display = "none";
+                th.appendChild(input);
+                
+
+            } else {
+                // Create input for text/number/url
+                const input = document.createElement('input');
+                input.id = `filter-${item.id}`;
+                
+                if (item.type === 'number') {
+                    input.type = 'text';
+                } else {
+                    input.type = item.type;
+                }
+                
+                input.className = item.type === 'number' ? 
+                                'filter-search-number' : 
+                                'filter-search';
+
+
+                th.appendChild(input);
+            }
+
+            filterRow.appendChild(th);
+
+            // Event listener for filter dropdown change
+            if(item.type === 'datalist') {
+                document.getElementById(`filter-${item.id}`).addEventListener('change', (event) => {
+                    filterTableUsingDropdown(`filter-${item.id}`, item.position);
+                });
+            } else {
+                document.getElementById(`filter-${item.id}`).addEventListener('input', (event) => {
+                    filterTableUsingInput(`filter-${item.id}`, item.position);
+                });
+            }
+            
+        });
+
+        // Add to table header (adjust selector as needed)
+        // const tableHeader = document.querySelector('table thead');
+        // if (tableHeader) {
+        //     tableHeader.appendChild(filterRow);
+        // }
+    }
+    // test the above function ------------
+    createFilterRow();
+
+    /////////////////End of the Block ///////////////////////////////////////////////////////
+
+    function copyToClipboard(triggeredElement) {
+        //alert(triggeredElement.textContent);
+        const textToCopy = triggeredElement.textContent.trim();
+        if (!textToCopy) {
+            alert("No Text available to copy!");
+            return;
+        }
+        navigator.clipboard
+            .writeText(textToCopy)
+            .then(() => alert("Text copied to clipboard!"))
+            .catch((err) =>
+                alert("Failed to copy prompt. Error: " + err)
+            );
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    function application_closing_prompt(e) {
+        if (!e) e = window.event;
+        //e.cancelBubble is supported by IE - this will kill the bubbling process.
+        e.cancelBubble = true;
+        e.returnValue = "You sure you want to leave?"; //This is displayed on the dialog
+
+        //e.stopPropagation works in Firefox.
+        if (e.stopPropagation) {
+        e.stopPropagation();
+        e.preventDefault();
+        }
+    }
+    window.onbeforeunload = application_closing_prompt;
+
+    // To Delete the Entire Table for Clean Html File Creation---////////////
+    function clearTable() {
+        var tbody = document.getElementById("watchlistTable").tBodies[0];
+        //console.log("tbody accessed:", tbody);
+        toggleOptionsPanel();
+
+        if (confirm("Do you want to delete the entire table?")) {
+            tbody.innerHTML = "";
+            console.log("Table Deleted!");
+
+            //-- Change saved status to false & change radio button to Red----Added in v_2.6---
+            flag_savedPage = false;
+            changeSaveStatus();
+
+        } else {
+            console.log("User cancelled the action.");
+        }
+
+    }
+
+    // To change the color of the Save Status Radio Button based on the save status of the page---Added in v_2.6--/////
+    function changeSaveStatus() {
+        if(flag_savedPage){
+            flag_savedPage = false;
+            statusSVG.style.fill = "#15aa55";
+
+        }else {
+            flag_savedPage = true;
+            statusSVG.style.fill = "#aa2715";
+        }
+    }
+    
+    ////////---- CSV Conversion Code in this BLock (Currently not implemented)--//////////
+    /*
+    // Convert entries to CSV format
+    function convertToCSV(objArray) {
+        const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+        
+        let str = 'Title,Year,IMDb Rating,IMDb Link,Genre,Sub-Genre\r\n';
+        
+        for (let i = 0; i < array.length; i++) {
+            
+            let line = '';
+            for (let index in array[i]) {
+                if (line !== '') line += ',';
+                line += array[i][index];
+            }
+            str += line + '\r\n';
+        }
+        return str;
+    }
+
+    // Download CSV file
+    function downloadCSV() {
+        const csv = convertToCSV(watchlistEntries);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        if (link.download !== undefined) { // feature detection
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "watchlist.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+    */
+    ///////---End of CSV Related Code Block--//////////////////////////////////////////////
+
+    // Json Import / Export Code Block ---Added in v_2.2--///////////////////////////////////////
+    function getTableData() {
+        const table = document.getElementById('watchlistTable');
+        // Use the second thead for headers
+        const headerRow = table.querySelectorAll('thead')[1].querySelector('tr');
+        const headers = Array.from(headerRow.querySelectorAll('th')).map(th => th.textContent.trim());
+
+        const dataRows = Array.from(table.querySelectorAll('tbody tr'));
+
+        const jsonData = {};
+        dataRows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            if (cells.length === 0) return; // skip empty rows
+            const title = cells[0].textContent.trim();
+            if (!title) return; // skip if title is empty
+
+            const entry = {};
+            for (let i = 1; i < headers.length && i < cells.length; i++) {
+                const cell = cells[i];
+                // If the cell has class 'td-link', extract the href from the first anchor tag
+                if (cell.classList.contains('td-link')) {
+                    const link = cell.querySelector('a');
+                    entry[headers[i]] = link ? link.href : "-";
+                } else {
+                    entry[headers[i]] = cell.textContent.trim();
+                }
+            }
+            jsonData[title] = entry;
+        });
+        return jsonData;
+    }
+
+    function exportTableToJSON() {
+        const data = getTableData();
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'watchlist_data.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    // Main import handler
+    document.getElementById('import-json').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const jsonData = JSON.parse(e.target.result);
+                renderTableFromJSON(jsonData);
+            } catch (err) {
+                alert("Invalid JSON file.");
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    async function renderTableFromJSON(jsonData) {
+        const userConfirmed = confirm('Do you want to override the existing data with the json file data?');
+        const userConfirmedDBUpdate = confirm('Do you wish to update the firestore database with the data from json file?');
+        const tableBody = document.querySelector('#watchlistTable tbody');
+        if (userConfirmed) {
+            allEntries.length = 0; // Clears all existing elements
+            tableBody.innerHTML = "";
+        }
+        console.log(userConfirmed);
+        console.log(userConfirmedDBUpdate);
+        //tableBody.innerHTML = ""; // Clear existing rows
+        
+        for (const [title, entry] of Object.entries(jsonData)) {
+            const rating = entry["IMDB Rating"] || "-";
+            const type = entry["Media Type"] || "-";
+            const language = entry["Language"] || "-";
+            const series = entry["Series"] || "-";
+            const position = entry["# / No.of Seasons"] || "-";
+            const genre = entry["Genre"] || "-";
+            const subGenre = entry["Sub-Genre"] || "-";
+            const tropes = entry["Tropes"] || "-";
+            const year = entry["Year"] || "-";
+            const grLink = entry["IMDB"] || "-";
+            const watchPriority = entry["Watch Priority"] || "-";
+            const watchStatus = entry["Watch Status"] || "-";
+            const personalGrades = entry["Personal Grades"] || "-";
+            const starCasts = entry["Star Casts"] || "-";
+
+            // Build the row HTML (as in your addEntry function)
+            const newRow = document.createElement('tr');
+            newRow.className = "data-table-row";
+            newRow.innerHTML = `
+                <td class="td-title" onclick="copyToClipboard(this)">${title}
+                    <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)">${editBtnSVG}</button>
+                </td>
+                <td class="td-rating">${rating}
+                    <button title="Delete Row"class="delete-btns" id="row-delete-btn">${deleteBtnSVG}</button>
+                </td>
+                <td class="td-type">${type}</td>
+                <td class="td-language">${language}</td>
+                <td class="td-series" onclick="copyToClipboard(this)">${series}</td>
+                <td class="td-position">${position}</td>
+                <td class="td-genre">${genre}</td>
+                <td class="td-sub-genre">${subGenre}</td>
+                <td class="td-tropes" onclick="copyToClipboard(this)">${tropes}</td>
+                <td class="td-year">${year}</td>
+                <td class="td-link">${generateLinkCell(grLink, linkSVG1)}</td>
+                <td class="td-watch-priority">${watchPriority}</td>
+                <td class="td-watch-status">${watchStatus}</td>
+                <td class="td-personal-grades">${personalGrades}</td>
+                <td class="td-star-casts" onclick="copyToClipboard(this)">${starCasts}</td>
+            `;
+
+            //--Older Code inside newRow.innerHTML
+            /* <button title="Delete Row"class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)">${deleteBtnSVG}</button> */
+
+            tableBody.appendChild(newRow);
+            // Create a new entry object
+            let nextEntry = {
+                title: title,
+                type: type,
+                language: language,
+                rating: rating,
+                series: series,
+                position: position,
+                genre: genre,
+                subGenre: subGenre,
+                tropes: tropes,
+                year: year,
+                grLink: grLink,
+                watchPriority: watchPriority,
+                watchStatus: watchStatus,
+                personalGrades: personalGrades,
+                starCasts: starCasts,
+                timestamp: Date.now()
+            };
+            const delBtn = newRow.querySelector('#row-delete-btn');
+            //console.log(delBtn); // For debugging 
+            let currentDocId = null;
+
+            if (userConfirmedDBUpdate) {
+
+                if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+                    //window.alert("Not Stored to firebase");
+                    entry._id = uid();
+                    // localEntries.push(entry);
+                    // Push to allEntries, no Firestore doc id
+                    allEntries.push({ entry: nextEntry, firestoreDocId: null });
+                    //addRow(entry, null);
+                } else {
+                    try {
+                        let docRef = await db
+                            .collection("My_ReadingList_01")
+                            .add(nextEntry);
+                        // addRow(entry, docRef.id);
+                        currentDocId = docRef.id; //--to use the docref.id variable outside of this code block
+                        allEntries.push({ entry: nextEntry, firestoreDocId: docRef.id });
+                        //addRow(entry, docRef.id);
+                    } catch (err) {
+                        alert("Error saving to Firebase: " + err.message);
+                    }
+                }
+                deleteRowOnclickFn(delBtn, newRow, currentDocId);
+
+            }
+            
+        }
+        updateRowCountLabel()
+
+        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+            window.alert("Not Stored to firebase");
+        }
+    }
+    ///////---End of JSON Import / Export Related Code Block--//////////////////////////////////////////////
+
+    function addRow(entry, firestoreDocId) {
+        const title = entry.title.trim() === "" ? "-" : entry.title.trim();
+        const type = entry.type.trim() === "" ? "-" : entry.type.trim();
+        const language = entry.language.trim() === "" ? "-" : entry.language.trim();
+        const parsedValue1 = parseFloat(entry.rating);
+        const rating = Number.isNaN(parsedValue1) ? "-" : parseFloat(parsedValue1.toFixed(2));
+        const series = entry.series.trim() === "" ? "-" : entry.series.trim();
+        const parsedValue2 = parseFloat(entry.position);
+        const position = Number.isNaN(parsedValue2) ? "-" : parseInt(parsedValue2);
+        const genre = entry.genre.trim() === "" ? "-" : entry.genre.trim();
+        const subGenre = entry.subGenre.trim() === "" ? "-" : entry.subGenre.trim();     
+        const tropes = entry.tropes.trim() === "" ? "-" : entry.tropes.trim();
+        const parsedValue3 = parseFloat(entry.year);
+        const year = Number.isNaN(parsedValue3) ? "-" : parseInt(parsedValue3);
+        const grLink = entry.grLink.trim();
+        const watchPriority = entry.watchPriority.trim() === "" ? "-" : entry.watchPriority.trim();
+        const watchStatus = entry.watchStatus.trim() === "" ? "-" : entry.watchStatus.trim();
+        const personalGrades = entry.personalGrades.trim() === "" ? "-" : entry.personalGrades.trim();
+        const starCasts = entry.starCasts.trim() === "" ? "-" : entry.starCasts.trim();
+
+        // Add the new entry to the table
+        const tableBody = document.querySelector('#watchlistTable tbody');
+        
+        const newRow = tableBody.insertRow();
+        newRow.className = "data-table-row";
+        
+        newRow.innerHTML = `
+            
+            <td class="td-title" onclick="copyToClipboard(this)">${title}
+                <button title="Edit Row" class="edit-btns" id="row-edit-btn" onclick="openEditPanel(this)">${editBtnSVG}</button>
+            </td>
+            <td class="td-rating">${rating}
+                <button title="Delete Row"class="delete-btns" id="row-delete-btn">${deleteBtnSVG}</button>
+            </td>
+            <td class="td-type">${type}</td>
+            <td class="td-language">${language}</td>
+            <td class="td-series" onclick="copyToClipboard(this)">${series}</td>
+            <td class="td-position">${position}</td>
+            <td class="td-genre">${genre}</td>
+            <td class="td-sub-genre">${subGenre}</td>
+            <td class="td-tropes" onclick="copyToClipboard(this)">${tropes}</td>
+            <td class="td-year">${year}</td>
+            <td class="td-link">${generateLinkCell(grLink, linkSVG1)}</td>
+            <td class="td-watch-priority">${watchPriority}</td>
+            <td class="td-watch-status">${watchStatus}</td>
+            <td class="td-personal-grades">${personalGrades}</td>
+            <td class="td-star-casts" onclick="copyToClipboard(this)">${starCasts}</td>
+            `;
+        //--Older Code inside newRow.innerHTML
+        /* <button title="Delete Row"class="delete-btns" id="row-delete-btn" onclick="deleteRow(this)">${deleteBtnSVG}</button> */
+
+        newRow.removeAttribute('style');
+        clearFields();
+        const delBtn = newRow.querySelector('#row-delete-btn');
+        //console.log(delBtn);
+        let currentDocId = firestoreDocId;
+        delBtn.onclick = async function (e) {
+            e.stopPropagation();
+            if (!confirm("Delete the Selected Row?")) return;
+            if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+                /*  if (entry._id) {
+                    let i = localEntries.findIndex(
+                        (x) => x._id === entry._id
+                    );
+                    if (i !== -1) localEntries.splice(i, 1);
+                } */
+                newRow.remove();
+                console.log("No. of Rows:  " + allEntries.length); // For debugging
+                updateRowCountLabel();
+                
+            } else {
+                try {
+                    if (currentDocId) {
+                        await db
+                            .collection("My_ReadingList_01")
+                            .doc(currentDocId)
+                            .delete();
+                        newRow.remove();
+                        // To delete the entry from the allEntires Object
+                        const index = allEntries.findIndex(entry => entry.firestoreDocId === currentDocId);
+                        if (index !== -1) {
+                            allEntries.splice(index, 1);
+                        }
+                        console.log("No. of Rows:  " + allEntries.length); // For debugging
+                        updateRowCountLabel();
+                    } else {
+                        alert(
+                            "Could not delete: missing Firestore document id."
+                        );
+                        console.log("No. of Rows:  " + allEntries.length); // For debugging
+                    }
+                } catch (err) {
+                    alert("Delete failed: " + err.message);
+                    console.log("No. of Rows:  " + allEntries.length); // For debugging
+                }
+            }
+        };
+        //console.log("No. of Rows:  " + allEntries.length); // For debugging
+    }
+
+    // Load Firestore entries - All Data & Display the Table
+    window.onload = function () {
+        try {
+            if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                db.collection("My_ReadingList_01")
+                .orderBy("genre", "asc")
+                .get()
+                .then((snapshot) => {
+                    
+                    snapshot.forEach((doc) => {
+                        let entryObj = { entry: doc.data(), firestoreDocId: doc.id };
+                        allEntries.push(entryObj);
+                        addRow(entryObj.entry, entryObj.firestoreDocId);
+                        //console.log(entryObj); //--For debugging
+                        //console.log(allEntries); //--For debugging
+                        
+                    });
+                    console.log("No. of Rows:  " + allEntries.length); // For debugging
+                    updateRowCountLabel();
+                });
+            }
+        } catch (error) {
+            console.error("An error occurred:", error);
+            console.log("No. of Rows:  " + allEntries.length); // For debugging
+        }
+        
+    };
+
+    function updateRowCountLabel() {
+        rowCountLabel.textContent = "No. of Rows: " + allEntries.length;
+    }
+
+    function deleteRowOnclickFn(delBtn, newRow, currentDocId) {
+
+        delBtn.onclick = async function (e) {
+            e.stopPropagation();
+            if (!confirm("Delete the Selected Row?")) return;
+            if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+                /*  if (entry._id) {
+                    let i = localEntries.findIndex(
+                        (x) => x._id === entry._id
+                    );
+                    if (i !== -1) localEntries.splice(i, 1);
+                } */
+                newRow.remove();
+                //console.log("No. of Rows:  " + allEntries.length); // For debugging
+                updateRowCountLabel();
+            } else {
+                try {
+                    if (currentDocId) {
+                        await db
+                            .collection("My_ReadingList_01")
+                            .doc(currentDocId)
+                            .delete();
+                        newRow.remove();
+
+                        // TO delete the entry from the allEntires Object
+                        const index = allEntries.findIndex(entry => entry.firestoreDocId === currentDocId);
+                        if (index !== -1) {
+                            allEntries.splice(index, 1);
+                        }
+                        console.log("No. of Rows:  " + allEntries.length); // For debugging
+                        updateRowCountLabel();
+                    } else {
+                        alert(
+                            "Could not delete: missing Firestore document id."
+                        );
+                        console.log("No. of Rows:  " + allEntries.length); // For debugging
+                    }
+                } catch (err) {
+                    alert("Delete failed: " + err.message);
+                    console.log("No. of Rows:  " + allEntries.length); // For debugging
+                }
+            }
+        };
+    }
+
+    
+
 </script>
 
-</body>
-</html>
+
+
+</body></html>
