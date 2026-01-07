@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Editor</title>
+    <style>
+        :root {
+            --panel-height: 85vh;
+            --panel-margin-inline: 0.5em;
+            --panel-padding-block:0.25em;
+            --panel-padding-inline: 0.25em;
+            --panel-background-color: #4e4e4e;
+            --panel-text-color:  #d4d4d4; 
+            --panel-font-size: 1.2em;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: var(--panel-text-color);
+            margin: 0;
+            padding: 0;
+        }
+        h3 {
+            margin: 0.25em;
+        }
+        .editor-container {
+            display: flex;
+            align-items: center;
+            /* gap: 20px; */
+            margin-top: 0.5em;
+            padding-inline: 0.5em;
+        }
+
+        .editor {
+            display: none;
+        }
+
+        textarea {
+            display: none;
+            flex: 1;
+            font-size: var(--panel-font-size);
+            height: var(--panel-height);
+            padding-block: var(--panel-padding-block);
+            padding-inline: var(--panel-padding-inline);
+            margin-inline: var(--panel-margin-inline);
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: var(--panel-background-color);
+            color: var(--panel-text-color); 
+
+            font-family: monospace; /* Sets the font to monospace */
+            white-space: pre-wrap;
+            tab-size: 4; /* Sets the tab size to 4 spaces */
+        }
+
+        iframe {
+            display: none;
+            height: var(--panel-height);
+            flex: 1.5;
+            font-size: var(--panel-font-size);
+            padding-block: var(--panel-padding-block);
+            padding-inline: var(--panel-padding-inline);
+            margin-inline: var(--panel-margin-inline);
+            border: none;
+            /* border: 1px solid #555; */
+            border-radius: 5px;
+            background-color: var(--panel-background-color);
+            color: var(--panel-text-color); 
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 0.25em;
+            justify-content: center;
+        }
+        button {
+            width: 8em;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        @media (max-aspect-ratio: 1/1) {
+            /* Styles for when height > width */
+            .editor-container {
+                flex-direction: column;
+            }
+            textarea, iframe {
+                flex: unset;
+                width: 90vw;
+                white-space: pre-wrap;
+                margin-bottom: 1em;
+            }
+            button {
+                width: unset;
+            }
+            .button-container {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button id="htmlButton">HTML</button>
+        <button id="cssButton">CSS</button>
+        <button id="jsButton">JavaScript</button>
+        <button id="outputButton">Output</button>
+    </div>
+
+    <div class="editor-container">
+
+            <textarea id="htmlCode" placeholder="Type HTML code here" spellcheck="false"></textarea>
+            <textarea id="htmlCode" placeholder="Type HTML code here" spellcheck="false"></textarea>
+            <textarea id="cssCode" placeholder="Type CSS code here" spellcheck="false"></textarea>
+            <textarea id="jsCode" placeholder="Type JavaScript code here" spellcheck="false"></textarea>
+            <iframe id="output"></iframe>
+    </div>
+
+    <script>
+
+        var buttonColorOnState = "#35724f";
+        // Function to update the iframe content
+        function updateOutput() {
+            const htmlCode = document.getElementById('htmlCode').value;
+            const cssCode = document.getElementById('cssCode').value;
+            const jsCode = document.getElementById('jsCode').value;
+
+            const output = document.getElementById('output');
+            const outputDocument = output.contentWindow.document;
+
+            const combinedCode = `
+                ${htmlCode}
+                <style>${cssCode}</style>
+                <script>${jsCode}<\/script>
+            `;
+
+            outputDocument.open();
+            outputDocument.write(combinedCode);
+            outputDocument.close();
+        }
+
+        // Add event listeners for real-time updates
+        document.getElementById('htmlCode').addEventListener('input', updateOutput);
+        document.getElementById('cssCode').addEventListener('input', updateOutput);
+        document.getElementById('jsCode').addEventListener('input', updateOutput);
+
+        // Toggle visibility of editors
+        document.getElementById('htmlButton').addEventListener('click', function() {
+            // document.getElementById('htmlCode').style.display = document.getElementById('htmlCode').style.display === 'block' ? 'none' : 'block';
+            const htmlCode = document.getElementById('htmlCode');
+            const htmlButton = document.getElementById('htmlButton');
+            if (htmlCode.style.display === 'block') {
+                htmlCode.style.display = 'none';
+                htmlButton.style.backgroundColor = ''; // Reset to default
+            } else {
+                htmlCode.style.display = 'block';
+                htmlButton.style.backgroundColor = buttonColorOnState; // Set to dark green
+            }
+        });
+        document.getElementById('cssButton').addEventListener('click', function() {
+            // document.getElementById('cssCode').style.display = document.getElementById('cssCode').style.display === 'block' ? 'none' : 'block';
+            const cssCode = document.getElementById('cssCode');
+            const cssButton = document.getElementById('cssButton');
+            if (cssCode.style.display === 'block') {
+                cssCode.style.display = 'none';
+                cssButton.style.backgroundColor = ''; // Reset to default
+            } else {
+                cssCode.style.display = 'block';
+                cssButton.style.backgroundColor = buttonColorOnState; // Set to dark green
+            }
+        });
+        document.getElementById('jsButton').addEventListener('click', function() {
+            // document.getElementById('jsCode').style.display = document.getElementById('jsCode').style.display === 'block' ? 'none' : 'block';
+            const jsCode = document.getElementById('jsCode');
+            const jsButton = document.getElementById('jsButton');
+            if (jsCode.style.display === 'block') {
+                jsCode.style.display = 'none';
+                jsButton.style.backgroundColor = ''; // Reset to default
+            } else {
+                jsCode.style.display = 'block';
+                jsButton.style.backgroundColor = buttonColorOnState; // Set to dark green
+            }
+        });
+        document.getElementById('outputButton').addEventListener('click', function() {
+            // document.getElementById('output').style.display = document.getElementById('output').style.display === 'block' ? 'none' : 'block';
+            const output = document.getElementById('output');
+            const outputButton = document.getElementById('outputButton');
+            if (output.style.display === 'block') {
+                output.style.display = 'none';
+                outputButton.style.backgroundColor = ''; // Reset to default
+            } else {
+                output.style.display = 'block';
+                outputButton.style.backgroundColor = buttonColorOnState; // Set to dark green
+            }
+            updateOutput();
+        });
+    </script>
+</body>
+</html>
