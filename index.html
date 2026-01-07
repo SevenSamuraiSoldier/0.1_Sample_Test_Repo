@@ -1,642 +1,129 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Ai Prompt Generator!</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- <link rel="stylesheet" href="style.css"> -->
-        
-        <style>
-            body {
-                /* position: relative; */
-                background-color: #333;
-                color: #bebebe;
-                /* font-family: Arial, sans-serif;
-                min-height: 100vh; */
-                /* display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: start;
-                padding: 20px; */
-            }
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Date & Time ? Timestamp Converter (Dark Theme)</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+    background-color: #242424;
+    color: #e0e0e0;
+    display: flex;
+    gap: 3rem;
+  }
+  .panel {
+    background: #393939;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+    flex: 1;
+  }
+  label, input, button {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    display: block;
+    width: 100%;
+    color: #e0e0e0;
+  }
+  input[type="datetime-local"], input[type="number"] {
+    padding: 0.3rem;
+    font-size: 1rem;
+    background-color: #2b2b2b;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #e0e0e0;
+  }
+  input[type="datetime-local"]::placeholder,
+  input[type="number"]::placeholder {
+    color: #888;
+  }
+  button {
+    cursor: pointer;
+    margin-top: 0.7rem;
+    background-color: #3a7bd5;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #285f9b;
+  }
+  #result, #convertedResult {
+    margin-top: 1rem;
+    font-weight: bold;
+    min-height: 1.5em;
+    white-space: pre-line;
+    color: #a2d2ff;
+  }
+</style>
+</head>
+<body>
 
-            input,button {
-                /* width: 100%; */
-                padding-block: 1em;
-                padding-inline: 1em;
-                margin: 1em 1em;
+<div class="panel">
+  <h2>Date & Time to Timestamp</h2>
+  <label for="dateTimePicker">Choose Date & Time:</label>
+  <input type="datetime-local" id="dateTimePicker" />
+  <button id="getTimestampBtn">Get Timestamp</button>
+  <div id="result"></div>
+</div>
 
-                background-color: #444;
-                color: #bebebe;
-                border: 1px solid #666;
-                border-radius: 4px;
-                /* font-size: 16px; */
-            }
-            button {
-                cursor: pointer;
-                min-width: 10em;
-            }
-            input {
-                min-width: 15em;
-            }
-            h3 {
-                text-align: center;
-                font-size: 1.5em;
-                margin-block: 1em;
-            }
-            #datalist-container {
-                display: flex;
-                flex-wrap: wrap;
-                /* gap: 2em; */
-                justify-content: center;
-                align-items: center;
-                align-content: center;
-            }
+<div class="panel">
+  <h2>Timestamp to Date & Time</h2>
+  <label for="timestampInput">Paste Timestamp (ms):</label>
+  <input type="number" id="timestampInput" placeholder="e.g. 1695042000000" />
+  <button id="convertTimestampBtn">Convert to Date & Time</button>
+  <div id="convertedResult"></div>
+</div>
 
-            #output {
-                margin-top: 20px;
-                padding: 15px;
-                background-color: #444;
-                border-radius: 4px;
-                min-height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 18px;
-                cursor: pointer;
-            }
+<script>
+  // Helper to format date with short month name
+  function formatDateWithShortMonth(date) {
+    const monthShort = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString();
+    return `${monthShort} ${day}, ${year} ${time}`;
+  }
 
-            /*--- For Popup Panel-------------------------*/
-            #new-datalist-panel {
-                display: none;
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background-color: #31615f;
-                /* display:flex; */
-                flex-wrap: wrap;
-            }
-            #new-input-group {
-                margin: auto;
-                width: 20em;
-                position: fixed;
-                top: 5em;
-                left: 50%;
-                transform: translateX(-50%);
-                display: flex;
-                flex-direction: column;
-                align-content: center;
-                justify-content: center;
-                flex-wrap: wrap;
-                
-            }
-            #new-input-group > label {
-                margin: 1em;
-                text-align: center;
-            }
-            /*-------------------------------------------*/
+  // Left panel: date/time -> timestamp
+  const dateTimePicker = document.getElementById("dateTimePicker");
+  const getTimestampBtn = document.getElementById("getTimestampBtn");
+  const resultDiv = document.getElementById("result");
+  
+  getTimestampBtn.addEventListener("click", () => {
+    if (!dateTimePicker.value) {
+      resultDiv.textContent = "Please select a date and time.";
+      return;
+    }
+    const selectedDateTime = new Date(dateTimePicker.value);
+    const timestamp = selectedDateTime.getTime();
+    const formattedDate = formatDateWithShortMonth(selectedDateTime);
+    resultDiv.textContent = `Timestamp (ms since Unix epoch): ${timestamp}\n(${formattedDate})`;
+  });
+  
+  // Right panel: timestamp -> date/time
+  const timestampInput = document.getElementById("timestampInput");
+  const convertTimestampBtn = document.getElementById("convertTimestampBtn");
+  const convertedResult = document.getElementById("convertedResult");
+  
+  convertTimestampBtn.addEventListener("click", () => {
+    const timestamp = Number(timestampInput.value);
+    if (!timestampInput.value || isNaN(timestamp) || timestamp < 0) {
+      convertedResult.textContent = "Please enter a valid positive timestamp in milliseconds.";
+      return;
+    }
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+      convertedResult.textContent = "Invalid timestamp value.";
+      return;
+    }
+    const formattedDate = formatDateWithShortMonth(date);
+    convertedResult.textContent = `Date & Time: ${formattedDate}`;
+  });
+</script>
 
-            .add-btn {
-                /* background-color: #7b7b7b; */
-                cursor: pointer;
-                opacity: 100%;
-                padding-inline: 0.5em;
-                padding-block: 0.5em;
-                transition: 0.2s ease-in-out;
-            }
-            .add-btn:hover, .add-btn:focus {
-                opacity: 100%;
-            }
-
-            #combine-btn-panel {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                align-items: center;
-            }
-            
-            @media screen and (orientation: portrait) {
-                input,button {
-                    padding-block: 0.5em;
-                    padding-inline: 0.25em;
-                    margin: 0.5em 0.5em;
-                }
-                h3 {
-                    font-size: 0.8em;
-                    margin-block: 0.25em;
-                }
-            }
-
-            
-        </style>
-    </head>
-    
-    <body>
-        <h3>Ai Prompt Generator!</h3>
-        <div id="new-datalist-panel">
-            <div id="new-input-group">
-                <label for="new-datalist-input">Type the Title of new input...</label>
-                <input type="text" id="new-datalist-input">
-                <button id="add-title-btn" onclick="addTitle()">Add Title</button>
-            </div>            
-        </div>
-
-        <div id="datalist-container">
-
-            <div class="datalist-group">
-                <!-- <label for="input1">objective1</label> -->
-                <input list="objective1" id="input1" placeholder="Choose an Objective for subject" enterkeyhint="done" />
-                <datalist id="objective1">
-                    <option value="cute"></option>
-                    <option value="adorable"></option>
-                    <option value="tiny"></option>
-                    <option value="angry"></option>
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-            </div>
-
-            <div class="datalist-group">
-                <input list="main-subject" id="input2" placeholder="Choose the Main Subject" enterkeyhint="done"/>
-                <datalist id="main-subject">
-                    <option value="Dog"></option>
-                    <option value="Cat"></option>
-                    <option value="Elephant"></option>
-                    <option value="Lion"></option>
-                    <option value="Tiger"></option>
-                    <option value="Bear"></option>
-                    <option value="Wolf"></option>
-                    <option value="Fox"></option>
-                    <option value="Rabbit"></option>
-                    <option value="Deer"></option>
-                    <option value="Monkey"></option>
-                    <option value="Giraffe"></option>
-                    <option value="Zebra"></option>
-                    <option value="Kangaroo"></option>
-                    <option value="Panda"></option>
-                    <option value="Horse"></option>
-                    <option value="Cow"></option>
-                    <option value="Pig"></option>
-                    <option value="Sheep"></option>
-                    <option value="Goat"></option>
-                    <option value="Albatross"></option>
-                    <option value="Alligator"></option>
-                    <option value="Alpaca"></option>
-                    <option value="Anaconda"></option>
-                    <option value="Antelope"></option>
-                    <option value="Arctic Fox"></option>
-                    <option value="Armadillo"></option>
-                    <option value="Axolotl"></option>
-                    <option value="Badger"></option>
-                    <option value="Bald Eagle"></option>
-                    <option value="Barracuda"></option>
-                    <option value="Bat"></option>
-                    <option value="Beaver"></option>
-                    <option value="Beluga Whale"></option>
-                    <option value="Blue Whale"></option>
-                    <option value="Bobcat"></option>
-                    <option value="Bonobo"></option>
-                    <option value="Cheetah"></option>
-                    <option value="Chimpanzee"></option>
-                    <option value="Cobra"></option>
-                    <option value="Cockatoo"></option>
-                    <option value="Coelacanth"></option>
-                    <option value="Cougar"></option>
-                    <option value="Crocodile"></option>
-                    <option value="Dolphin"></option>
-                    <option value="Dugong"></option>
-                    <option value="Eagle"></option>
-                    <option value="Emu"></option>
-                    <option value="Falcon"></option>
-                    <option value="Flamingo"></option>
-                    <option value="Gazelle"></option>
-                    <option value="Gecko"></option>
-                    <option value="Gibbon"></option>
-                    <option value="Gorilla"></option>
-                    <option value="Hammerhead Shark"></option>
-                    <option value="Hedgehog"></option>
-                    <option value="Hippopotamus"></option>
-                    <option value="Hyena"></option>
-                    <option value="Iguana"></option>
-                    <option value="Jaguar"></option>
-                    <option value="Jellyfish"></option>
-                    <option value="Kangaroo Rat"></option>
-                    <option value="Kingfisher"></option>
-                    <option value="Koala"></option>
-                    <option value="Komodo Dragon"></option>
-                    <option value="Lemur"></option>
-                    <option value="Leopard"></option>
-                    <option value="Lynx"></option>
-                    <option value="Manatee"></option>
-                    <option value="Manta Ray"></option>
-                    <option value="Mongoose"></option>
-                    <option value="Narwhal"></option>
-                    <option value="Ocelot"></option>
-                    <option value="Octopus"></option>
-                    <option value="Orangutan"></option>
-                    <option value="Ostrich"></option>
-                    <option value="Otter"></option>
-                    <option value="Pangolin"></option>
-                    <option value="Peacock"></option>
-                    <option value="Pelican"></option>
-                    <option value="Penguin"></option>
-                    <option value="Platypus"></option>
-                    <option value="Polar Bear"></option>
-                    <option value="Porcupine"></option>
-                    <option value="Puma"></option>
-                    <option value="Quokka"></option>
-                    <option value="Raccoon"></option>
-                    <option value="Rhinoceros"></option>
-                    <option value="Seahorse"></option>
-                    <option value="Snow Leopard"></option>
-                    <option value="Tapir"></option>
-                    <option value="Tasmanian Devil"></option>
-                    <option value="Toucan"></option>
-                    <option value="Vulture"></option>
-                    <option value="Walrus"></option>
-                    <option value="Wombat"></option>
-                    <option value="Yak"></option>
-                    <option value="Zebu"></option>
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)">+</span>
-            </div>
-
-            <div class="datalist-group">
-                <input
-                    list="material-description1"
-                    id="input3"
-                    placeholder="Choose a prefix for material"
-                    enterkeyhint="done"
-                />
-                <datalist id="material-description1">
-                    <option value="made from"></option>
-                    <option value="made out of"></option>
-                    <option value="filled with"></option>
-                    <option value="created from"></option>
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-            </div>
-
-            <div class="datalist-group">
-                <input
-                    list="material-description2"
-                    id="input4"
-                    placeholder="Choose a material (optional)"
-                    enterkeyhint="done"
-                />
-                <datalist id="material-description2">
-                    <option value="small minecraft cubes"></option>
-                    <option value="small lego bricks"></option>
-                    <option value="knitted wool"></option>
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-            </div>
-
-            <div class="datalist-group">
-                <input
-                    list="action-objective"
-                    id="input5"
-                    placeholder="Choose an objective for action"
-                    enterkeyhint="done"
-                />
-                <datalist id="action-objective">
-                    <option value="happily"></option>
-                    <option value="angrily"></option>
-                    <option value="lazily"></option>
-                    <option value="calmy"></option>
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-            </div>
-
-            <div class="datalist-group">
-                <input
-                    list="action"
-                    id="input5"
-                    placeholder="Choose an action"
-                    enterkeyhint="done"
-                />
-                <datalist id="action">
-                    <option value="playing"></option>
-                    <option value="walking"></option>
-                    <option value="running"></option>
-                    <option value="flying"></option>
-                    <option value="swimming"></option>
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-            </div>
-
-            <div class="datalist-group">
-                <input
-                    list="action-descriptor"
-                    id="input5"
-                    placeholder="Choose an action-descriptor"
-                    enterkeyhint="done"
-                />
-                <datalist id="action-descriptor">
-                    <option value="in its natural habitat."></option>
-                    <option value="in its usual location."></option>
-                    <option value="on the ground."></option>
-                    <option value="in the garden."></option>
-                    <option value="in the forrest."></option>
-                    <option value="in the ocean"></option>
-                    <option value="over the mountains"></option>
-                    <option value="near the river"></option>
-                    <option value="over a city"></option>
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-            </div>
-
-            <div class="datalist-group">
-                <input
-                    list="art style"
-                    id="input5"
-                    placeholder="Choose an art style"
-                    enterkeyhint="done"
-                />
-                <datalist id="art style">
-                    <option value="knitted toy style art."></option>
-                    <option value="Minecraft style art."></option>
-                    <option value="Lego style art."></option>
-                    <option value="Ghibli style art."></option>
-                    <option value="Anime style art."></option>
-                    <option value="Pixar studio style art."></option>
-                    <option value="classic disney 2d style art."></option>
-                    <option value="caricature style art."></option>
-                    <option value="Marvel studio style art."></option>
-                    
-                </datalist>
-                <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-            </div>
-
-        </div>
-
-        <div id="combine-btn-panel">
-            <button id="combine-btn" onclick="combineInputs()">Combine</button>
-            <button id="download-btn" onclick="downloadHTML()">Save</button>
-        </div>
-        
-
-        <!-- <h4>Output:</h4> -->
-        <p id="output" onclick="copyToClipboard()">Prompt will appear here....</p>
-
-        <script>
-            let dropdownCount = 3;
-            let newInputTitlePanel = document.getElementById("new-datalist-panel");
-            let newDatalistInput = document.getElementById("new-datalist-input");
-            const downloadBtn = document.getElementById('downloadBtn');
-            let newTitle;
-            let currentPlusBtn;
-
-            // Wait for the webpage to load and then Add input event listeners-----
-            document.addEventListener('DOMContentLoaded', function() {
-                // Get the div with id 'datalist-container'
-                const datalistContainer = document.getElementById('datalist-container');
-
-                // Check if the div exists
-                if (datalistContainer) {
-                    // Get all input elements inside the div
-                    const inputElements = datalistContainer.querySelectorAll('input');
-                    //console.log(inputElements);
-
-                    // Loop through each input element and add an event listener
-                    inputElements.forEach(function(inputElement) {
-                        
-                        inputElement.addEventListener("keydown", (e) => {
-                            // e.keyCode 13 is also equivalent to Enter key. 
-                            if ((e.key === "Enter" || e.keyCode === 13) && inputElement.value.trim()) {
-                                const value = inputElement.value.trim();
-                                const datalist = inputElement.nextElementSibling;
-                                //console.log(datalist); //For Debugging
-                                let newCustomValues = new Set();
-
-                                const allOptions = Array.from(datalist.options).map(
-                                    (opt) => opt.value
-                                );
-                                if (
-                                    !allOptions.includes(value.toLowerCase()) &&
-                                    !newCustomValues.has(value.toLowerCase())
-                                ) {
-                                    
-                                    const newOption = document.createElement("option");
-                                    
-                                    var newValue = value.toLowerCase();
-                                    newOption.value = newValue;
-                                    datalist.appendChild(newOption);
-                                    newCustomValues.add(newValue);
-                                    
-                                    alert(`Added new option: ${value}`);
-                                    inputElement.value = "";
-                                    
-                                } else {
-                                    alert(`Value already exists!`);
-                                }
-                                e.preventDefault(); //To prevent default behaviour of Enter Key
-                            }
-                        });
-
-                    });
-                } else {
-                    console.log('Div with id "datalist-container" not found.');
-                }
-            });
-
-
-            // Function to open new title panel & Set the current "+" button as currentPlusBtn element 
-            function createNewDropdown(currentElement) {
-                currentPlusBtn = currentElement;
-                //console.log("Current plus button:  "+currentPlusBtn);
-                newInputTitlePanel.style.display = "flex";
-                newDatalistInput.focus();
-            }
-
-            function addNewDropDownToDisplay(currentElement){
-                let previousParentElement = currentElement.parentElement;
-                //const container = document.getElementById("datalist-container");
-
-                // Create a new datalist group------------
-                const newGroup = document.createElement("div");
-                newGroup.classList.add("datalist-group");
-
-                /* ----Old Code----------------------------------------
-                Create input field for placeholder text
-                const inputField = document.createElement("input");
-                inputField.type = "text";
-                inputField.placeholder = "Enter placeholder text";
-                previousParentElement.insertAdjacentElement('afterend', inputField);
-                container.appendChild(inputField); ---Old Code-------
-                alert("Enter key is pressed");
-                */
-            
-                const placeholder = newTitle.trim();
-                if (placeholder) {
-
-                    dropdownCount++;
-                    console.log(`new dropdown id: ${dropdownCount}`);
-                    const datalistId = `dropdown${dropdownCount}`;
-
-                    newGroup.innerHTML = `
-                        <input
-                            list="${placeholder}"
-                            id="${datalistId}"
-                            placeholder="${placeholder}"
-                            enterkeyhint="done"
-                        />
-                        <datalist id="${placeholder}">
-                            <option value="New Entry">Option-1</option>
-                        </datalist>
-                        <span class="add-btn" onclick="createNewDropdown(this)" title="Add New Input Field.">+</span>
-                    `
-                    //inputField.style.display = "none";
-                    previousParentElement.insertAdjacentElement('afterend', newGroup);
-                    //alert("End of the Block");
-                    //container.appendChild(newGroup); ---Old Code -------------------
-                    const newDropDown = previousParentElement.nextElementSibling.firstElementChild;
-                    //console.log(previousParentElement.nextElementSibling.firstElementChild);
-                    addEventListenerToNewDropDown(newDropDown);
-                }
-        
-                    
-                
-            }
-
-            function combineInputs() {
-                const inputs = Array.from(
-                    document.querySelectorAll("#datalist-container input")
-                );
-
-                const combinedValues = inputs
-                    .map((input) => input.value.trim())
-                    .filter((value) => value !== "")
-                    .join(" ");
-
-                //combineInputs = `Create an image of ${combineInputs}`;
-                document.getElementById("output").innerText = `Create an image of ${combinedValues}`;
-
-            }
-            
-            function copyToClipboard() {
-                const outputDiv = document.getElementById("output");
-
-                if (!outputDiv.innerText) {
-                    alert("No prompt available to copy!");
-                    return;
-                }
-
-                const textToCopy = outputDiv.innerText;
-
-                navigator.clipboard
-                    .writeText(textToCopy)
-                    .then(() => alert("prompt copied to clipboard!"))
-                    .catch((err) =>
-                        alert("Failed to copy prompt. Error: " + err)
-                    );
-
-            }
-
-            function addTitle() {
-                newTitle = newDatalistInput.value;
-                newDatalistInput.value = "";
-                newInputTitlePanel.style.display = "none";
-                alert("New Title:  "+newTitle);
-                addNewDropDownToDisplay(currentPlusBtn);
-            }
-
-            function addEventListenerToNewDropDown(inputElement) {
-                inputElement.addEventListener("keydown", (e) => {
-                    // e.keyCode 13 is also equivalent to Enter key. 
-                    if ((e.key === "Enter" || e.keyCode === 13) && inputElement.value.trim()) {
-                        const value = inputElement.value.trim();
-                        const datalist = inputElement.nextElementSibling;
-                        //console.log(datalist); //For Debugging
-                        let newCustomValues = new Set();
-
-                        const allOptions = Array.from(datalist.options).map(
-                            (opt) => opt.value
-                        );
-                        if (
-                            !allOptions.includes(value.toLowerCase()) &&
-                            !newCustomValues.has(value.toLowerCase())
-                        ) {
-                            
-                            const newOption = document.createElement("option");
-                            
-                            var newValue = value.toLowerCase();
-                            newOption.value = newValue;
-                            datalist.appendChild(newOption);
-                            newCustomValues.add(newValue);
-                            
-                            alert(`Added new option: ${value}`);
-                            inputElement.value = "";
-                            
-                        } else {
-                            alert(`Value already exists!`);
-                        }
-                        e.preventDefault(); //To prevent default behaviour of Enter Key
-                    }
-                });
-            }
-            
-            
-            //-----Code Section For Download HTML Page Logic ------------------------
-
-            function getPageFilename() {
-                const path = window.location.pathname;
-                let filename = path.substring(path.lastIndexOf('/') + 1);
-                filename = filename.split('?')[0]; // Remove query parameters
-                filename = decodeURIComponent(filename);
-                console.log(filename);
-                
-                // Handle empty filenames (e.g., trailing slash URLs)
-                return filename;
-            }
-            
-            function generateNextFilename() {
-                const currentFilename = getPageFilename();
-                
-                // Split into base name and extension
-                const [base, extension = 'html'] = currentFilename.split(/\.([^.]+)$/);
-                
-                
-                // Find trailing numbers in base name
-                const numberMatch = base.match(/_(\d+)$/);
-                //const numberMatch = base.match(/(\D*)(\d+)$/);
-                
-                let newBase;
-                if (numberMatch) {
-                    // Increment existing number
-                    const newNumber = parseInt(numberMatch[1], 10) + 1;
-                    newBase = base.replace(/_\d+$/, `_${newNumber}`);
-                    //newBase = `${prefix}${newNumber}`;
-                } else {
-                    // Add new number suffix
-                    newBase = `${base}_1`;
-                }
-                return `${newBase}.${extension}`;
-                
-            }
-
-            function downloadHTML() {
-                // Get the current HTML content
-                const htmlContent = document.documentElement.outerHTML;
-
-                // Create a Blob object with the HTML content
-                const blob = new Blob([htmlContent], { type: 'text/html' });
-
-                // Create a temporary anchor element
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                // Set the file name for download
-                a.download = generateNextFilename();
-
-                // Programmatically click the anchor to trigger download
-                a.click();
-
-                // Clean up
-                URL.revokeObjectURL(a.href);
-            }
-            
-            //-----------------------------------------------------------------------
-        </script>
-    </body>
+</body>
 </html>
