@@ -1,0 +1,15 @@
+so after updating the index.html file I opened cmd in the same folder & then ran these commands one by one (git add index.html, git commit -m "updated to v_1.2", git push) & I got the following output (C:\Users\NikhilP\Desktop\Github_Testing\Github_Repos\0.1_Sample_Test_Repo>git add index.html
+
+C:\Users\NikhilP\Desktop\Github_Testing\Github_Repos\0.1_Sample_Test_Repo>git commit -m "updated to v_1.2"
+[main 1540fbd] updated to v_1.2
+ 1 file changed, 127 insertions(+), 640 deletions(-)
+
+C:\Users\NikhilP\Desktop\Github_Testing\Github_Repos\0.1_Sample_Test_Repo>git push
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 1.59 KiB | 813.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To [https://github.com/SevenSamuraiSoldier/0.1_Sample_Test_Repo.git](https://github.com/SevenSamuraiSoldier/0.1_Sample_Test_Repo.git)
+   e970003..1540fbd  main -> main)  is it usual for these types of push commands?
